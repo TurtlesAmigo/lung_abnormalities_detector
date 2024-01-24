@@ -24,7 +24,7 @@
       <artifactId>javafx-fxml</artifactId>
       <version>21</version>
     </dependency>
-    <dependency>
+<dependency>
       <groupId>org.controlsfx</groupId>
       <artifactId>controlsfx</artifactId>
       <version>11.1.2</version>
@@ -50,6 +50,7 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
+
     </dependency>
     <dependency>
       <groupId>org.jetbrains</groupId>
@@ -64,7 +65,16 @@
       <artifactId>opencv</artifactId>
       <version>4.9.0-0</version>
     </dependency>
-
+    <dependency>
+      <groupId>com.opencsv</groupId>
+      <artifactId>opencsv</artifactId>
+      <version>5.7.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.10.0</version>
+    </dependency>
 
   </dependencies>
 
