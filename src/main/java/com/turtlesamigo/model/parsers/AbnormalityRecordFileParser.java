@@ -19,7 +19,7 @@ public class AbnormalityRecordFileParser {
         FileReader fileReader = new FileReader(csvPath);
         CSVReader csvReader = new CSVReader(fileReader);
         var rows = csvReader.readAll();
-        _records = rows.stream().map(this::parseCsvRow).collect(Collectors.toList());
+        _records = rows.stream().skip(1).map(this::parseCsvRow).collect(Collectors.toList());
     }
 
     public String getFilePath() {
