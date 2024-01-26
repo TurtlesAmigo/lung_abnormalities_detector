@@ -15,13 +15,16 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import nu.pattern.OpenCV;
 import org.opencv.core.Core;
 
 import java.io.File;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
-    static {System.loadLibrary(Core.NATIVE_LIBRARY_NAME);}
+    static {
+        OpenCV.loadLocally();
+    }
 
     private ImageView imageView = new ImageView();
     private Label fileNameLabel = new Label("File: ");
