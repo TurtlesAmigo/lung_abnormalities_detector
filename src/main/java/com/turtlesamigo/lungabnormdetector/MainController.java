@@ -2,11 +2,16 @@ package com.turtlesamigo.lungabnormdetector;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.File;
 
@@ -21,7 +26,7 @@ public class MainController {
     private Label fileSizeLabel;
 
     @FXML
-    private void onOpenImage() {
+    public void onOpenImage() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Image File");
         fileChooser.getExtensionFilters().addAll(
@@ -44,7 +49,8 @@ public class MainController {
         }
     }
 
-    private void openSampleAnalyzer() {
+    @FXML
+    public void onSampleOverview(ActionEvent actionEvent) throws Exception {
     }
 
     private void detectAbnormalities(ActionEvent event) {

@@ -19,6 +19,9 @@
         <SeparatorMenuItem/>
         <MenuItem text="Exit" onAction="#exitApplication"/>
       </Menu>
+      <Menu text="Train">
+        <MenuItem text="Sample overview" onAction="#onSampleOverview"/>
+      </Menu>
     </MenuBar>
 
     <ImageView fx:id="imageView"/>
