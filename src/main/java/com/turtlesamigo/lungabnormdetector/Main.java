@@ -16,7 +16,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        primaryStage.setTitle("Image Open App");
+        primaryStage.setTitle("Lung abnormalities detector");
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("main-view.fxml"));
         Parent root = loader.load();
