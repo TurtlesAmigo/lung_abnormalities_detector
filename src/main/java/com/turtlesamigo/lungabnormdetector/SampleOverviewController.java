@@ -5,8 +5,8 @@ import com.turtlesamigo.model.parsers.AbnormalityRecordFileParser;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 
@@ -18,12 +18,11 @@ import java.util.List;
 
 public class SampleOverviewController {
     private final HashMap<String, File> _imageId2File = new HashMap<>();
+    public TreeView<String> _recordsTree;
     @FXML
     private TextField _tfTrainRecordsDir;
     @FXML
     private ImageView _ivSelectedImage;
-    @FXML
-    private TableView<AbnormalityRecord> _tvRecords;
 
     @FXML
     public void onBrowseTrainRecordsDir(ActionEvent actionEvent){
@@ -58,7 +57,6 @@ public class SampleOverviewController {
     }
 
     private void fillRecordsTable(List<AbnormalityRecord> records) {
-        _tvRecords.getItems().clear();
     }
 
     private static List<AbnormalityRecord> readRecordsFromFiles(File[] recordFiles) {

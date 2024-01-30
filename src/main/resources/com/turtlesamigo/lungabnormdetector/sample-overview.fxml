@@ -19,14 +19,8 @@
             <Button text="Browse" onAction="#onBrowseTrainRecordsDir"/>
         </HBox>
         <HBox alignment="CENTER" spacing="20">
-            <TableView fx:id="recordsTable">
-                <columns>
-                    <TableColumn text="Image id"/>
-                    <TableColumn text="Image size"/>
-                    <TableColumn text="Founding"/>
-                    <TableColumn text="Radiologist"/>
-                </columns>
-            </TableView>
+            <TreeView fx:id="_recordsTree" onContextMenuRequested="#selectItem" onMouseClicked="#selectItem">
+            </TreeView>
             <ImageView fx:id="_ivSelectedImage"/>
         </HBox>
     </VBox>
