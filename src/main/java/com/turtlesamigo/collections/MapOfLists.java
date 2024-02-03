@@ -1,5 +1,6 @@
 package com.turtlesamigo.collections;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,7 +20,9 @@ public class MapOfLists<K, V> extends HashMap<K, List<V>> {
         if (containsKey(key)) {
             get(key).add(value);
         } else {
-            put(key, List.of(value));
+            var lst = new ArrayList<V>();
+            lst.add(value);
+            put(key, lst);
         }
     }
 
