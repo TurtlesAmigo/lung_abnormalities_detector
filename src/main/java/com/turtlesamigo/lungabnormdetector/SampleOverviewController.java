@@ -6,11 +6,9 @@ import com.turtlesamigo.model.parsers.AbnormalityRecordFileParser;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
@@ -20,8 +18,10 @@ import java.util.*;
 public class SampleOverviewController implements Initializable {
     private final HashMap<String, File> _imageId2File = new HashMap<>();
     private final MapOfLists<String, AbnormalityRecord> _imageId2Records = new MapOfLists<>();
-    private final HashMap<String, TreeItem> _radId2TreeItem = new HashMap<>();
+    private final HashMap<String, TreeItem<String>> _radId2TreeItem = new HashMap<>();
     public TreeView<String> _recordsTree;
+    @FXML
+    private TableView _ttvSelectedRecord;
     @FXML
     private TextField _tfTrainRecordsDir;
     @FXML
@@ -54,6 +54,7 @@ public class SampleOverviewController implements Initializable {
         }
 
         System.out.println("Selected folder: " + selectedDirectory.getAbsolutePath());
+        _tfTrainRecordsDir.setText(selectedDirectory.getAbsolutePath());
 
         var recordFiles = selectedDirectory.listFiles((dir, name) -> name.endsWith(".csv"));
 
@@ -77,15 +78,17 @@ public class SampleOverviewController implements Initializable {
             return;
         }
 
-        List<TreeItem<String>> radiologists = _recordsTree.getRoot().getChildren();
-        for (TreeItem<String> radiologistItem : radiologists) {
+        List<TreeItem<String>> radItemFolders = _recordsTree.getRoot().getChildren();
+        for (TreeItem<String> radiologistItem : radItemFolders) {
             radiologistItem.getChildren().clear();
         }
 
         for (var record : recordsAll) {
             _imageId2Records.add(record.getImageId(), record);
-            assert _radId2TreeItem.containsKey(record.getRadId());
-            _radId2TreeItem.get(record.getRadId()).getChildren().add(new TreeItem<>(record.getImageId()));
+            var radId = record.getRadId();
+            var imageId = record.getImageId();
+            assert _radId2TreeItem.containsKey(radId);
+            _radId2TreeItem.get(radId).getChildren().add(new TreeItem<>(imageId));
         }
 
         // Build a map from image id to image file.
