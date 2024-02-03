@@ -3,6 +3,8 @@ package com.turtlesamigo.model;
 import org.opencv.core.Rect2d;
 
 public class AbnormalityRecord {
+    public static final String UNKNOWN_RAD_ID_STRING = "Unknown";
+
     private final String _imageId;
     private final AbnormalityClass _abnormalityClass;
     private final String _radId;
@@ -14,7 +16,7 @@ public class AbnormalityRecord {
                              Rect2d boundingBox) {
         _imageId = imageId;
         _abnormalityClass = abnormalityClass;
-        _radId = radId;
+        _radId = radId == null ? UNKNOWN_RAD_ID_STRING : radId;
         _boundingBox = boundingBox;
 
         // The bounding box should be null when there is no finding.

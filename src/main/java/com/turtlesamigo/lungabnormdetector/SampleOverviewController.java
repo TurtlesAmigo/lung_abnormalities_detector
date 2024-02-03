@@ -159,6 +159,9 @@ public class SampleOverviewController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         var radiologists = new TreeItem<>("Radiologists");
         _recordsTree.setRoot(radiologists);
+        var unknownRadItem = new TreeItem<>(AbnormalityRecord.UNKNOWN_RAD_ID_STRING);
+        radiologists.getChildren().add(unknownRadItem);
+        _radId2TreeItem.put(AbnormalityRecord.UNKNOWN_RAD_ID_STRING, unknownRadItem);
 
         for (int i = 1; i <= 17; i++) {
             String radId = "R" + i;
