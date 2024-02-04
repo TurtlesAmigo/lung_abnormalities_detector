@@ -107,6 +107,10 @@ public class SampleOverviewController implements Initializable {
         }
     }
 
+    /**
+     * Show the selected image and its records in the table view.
+     * @param actionEvent
+     */
     @FXML
     public void selectItem(MouseEvent actionEvent) {
         var selectedItem = _recordsTree.getSelectionModel().getSelectedItem();
@@ -130,7 +134,11 @@ public class SampleOverviewController implements Initializable {
     private void showRecords(String imageId) {
         var records = _imageId2Records.get(imageId);
         _tvSelectedRecordData.getItems().clear();
-        var recordsView = records.stream().map(AbnormalityRecordView::new).toList();
+        var recordsView = records.stream().map(AbnormalityRecordView::new).sorted(
+                Comparator.comparing(AbnormalityRecordView::getRadId)
+                        .thenComparing(AbnormalityRecordView::getFoundingType)
+                        .thenComparing(AbnormalityRecordView::getBoundingBoxSize)
+        ).toList();
         _tvSelectedRecordData.getItems().addAll(recordsView);
     }
 
