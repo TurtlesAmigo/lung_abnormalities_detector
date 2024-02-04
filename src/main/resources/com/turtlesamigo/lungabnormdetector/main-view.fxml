@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Group?>
-<?import javafx.scene.Scene?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.image.ImageView?>
-<Group xmlns="http://javafx.com/javafx"
-       xmlns:fx="http://javafx.com/fxml"
-       fx:controller="com.turtlesamigo.lungabnormdetector.MainController">
+<AnchorPane minHeight="1024" minWidth="2048" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.turtlesamigo.lungabnormdetector.MainController">
 
-  <VBox>
+  <VBox prefHeight="1024.0" prefWidth="2048.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
     <MenuBar>
       <Menu text="File">
-        <MenuItem text="Open" onAction="#onOpenImage"/>
-        <SeparatorMenuItem/>
-        <MenuItem text="Exit" onAction="#exitApplication"/>
+        <MenuItem onAction="#onOpenImage" text="Open" />
+        <SeparatorMenuItem />
+        <MenuItem onAction="#exitApplication" text="Exit" />
       </Menu>
       <Menu text="Train">
-        <MenuItem text="Sample overview" onAction="#onSampleOverview"/>
+        <MenuItem onAction="#onSampleOverview" text="Sample overview" />
       </Menu>
     </MenuBar>
 
-    <ImageView fx:id="imageView"/>
-    <Label fx:id="fileNameLabel" text="File Name: "/>
-    <Label fx:id="fileSizeLabel" text="File Size: "/>
+    <ImageView fx:id="imageView" />
+    <Label fx:id="fileNameLabel" text="File Name: " />
+    <Label fx:id="fileSizeLabel" text="File Size: " />
   </VBox>
-</Group>
+</AnchorPane>
