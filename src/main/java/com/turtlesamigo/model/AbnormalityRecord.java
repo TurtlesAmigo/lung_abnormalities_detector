@@ -38,4 +38,8 @@ public class AbnormalityRecord {
     public Rect2d getBoundingBox() {
         return _boundingBox;
     }
+
+    public boolean isFinding() {
+        return _abnormalityClass.isFinding();
+    }
 }
