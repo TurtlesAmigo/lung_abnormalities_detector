@@ -57,7 +57,7 @@ public class MainController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("sample-overview.fxml"));
         Parent root = loader.load();
 
-        stage.setScene(new Scene(root, 800, 600));
+        stage.setScene(new Scene(root));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();
     }
