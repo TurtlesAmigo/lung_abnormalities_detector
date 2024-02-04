@@ -3,6 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.ImageView?>
@@ -10,11 +12,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.turtlesamigo.lungabnormdetector.SampleOverviewController">
+<AnchorPane minHeight="1024" minWidth="2048" prefHeight="1024" prefWidth="2048" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.turtlesamigo.lungabnormdetector.SampleOverviewController">
 
-    <VBox alignment="CENTER" spacing="20">
+    <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" spacing="20" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <HBox alignment="CENTER" spacing="20">
             <Label text="Train directory:" />
             <TextField fx:id="_tfTrainRecordsDir" editable="false" prefWidth="400.0" />
@@ -32,13 +32,12 @@
             <HBox.margin>
                <Insets bottom="20.0" />
             </HBox.margin></ImageView>
-            <TableView fx:id="_ttvSelectedRecord" prefWidth="500.0" HBox.hgrow="ALWAYS">
+            <TableView fx:id="_tvSelectedRecordData" prefWidth="500.0" HBox.hgrow="ALWAYS">
                 <columns>
-                    <TableColumn prefWidth="50.0" text="Show" />
-                    <TableColumn editable="false" prefWidth="100.0" text="RadID" />
-                    <TableColumn prefWidth="150.0" text="Founding type" />
-                    <TableColumn editable="false" prefWidth="100.0" text="Min point" />
-                    <TableColumn prefWidth="100.0" text="Max point" />
+                    <TableColumn fx:id="_clmnShow" prefWidth="50.0" text="Show" />
+                    <TableColumn fx:id="_clmnRadId" editable="false" prefWidth="100.0" text="RadID" />
+                    <TableColumn fx:id="_clmnFoundingType" editable="false" prefWidth="150.0" text="Founding type" />
+                    <TableColumn fx:id="_clmnBBoxSize" editable="false" prefWidth="100.0" text="Size" />
                 </columns>
             <HBox.margin>
                <Insets bottom="20.0" right="20.0" />

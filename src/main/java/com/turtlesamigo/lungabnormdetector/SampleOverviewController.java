@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
@@ -20,8 +21,12 @@ public class SampleOverviewController implements Initializable {
     private final MapOfLists<String, AbnormalityRecord> _imageId2Records = new MapOfLists<>();
     private final HashMap<String, TreeItem<String>> _radId2TreeItem = new HashMap<>();
     public TreeView<String> _recordsTree;
+    public TableColumn<AbnormalityRecordView, Boolean> _clmnShow;
+    public TableColumn<AbnormalityRecordView, String> _clmnRadId;
+    public TableColumn<AbnormalityRecordView, String> _clmnFoundingType;
+    public TableColumn<AbnormalityRecordView, String> _clmnBBoxSize;
     @FXML
-    private TableView _ttvSelectedRecord;
+    private TableView<AbnormalityRecordView> _tvSelectedRecordData;
     @FXML
     private TextField _tfTrainRecordsDir;
     @FXML
@@ -102,16 +107,31 @@ public class SampleOverviewController implements Initializable {
         }
     }
 
-    private void fillRecordsTable(List<AbnormalityRecord> records) {
-        //_tvRecords.getItems().clear();
-    }
-
     @FXML
-    public void selectItem(ActionEvent actionEvent) {
+    public void selectItem(MouseEvent actionEvent) {
+        var selectedItem = _recordsTree.getSelectionModel().getSelectedItem();
 
+        if (selectedItem == null) {
+            return;
+        }
+
+        var imageId = selectedItem.getValue();
+
+        if (!_imageId2File.containsKey(imageId)) {
+            return;
+        }
+
+        var imageFile = _imageId2File.get(imageId);
+        var image = new javafx.scene.image.Image(imageFile.toURI().toString());
+        _ivSelectedImage.setImage(image);
+        showRecords(imageId);
     }
 
-    private void fillTreeView() {
+    private void showRecords(String imageId) {
+        var records = _imageId2Records.get(imageId);
+        _tvSelectedRecordData.getItems().clear();
+        var recordsView = records.stream().map(AbnormalityRecordView::new).toList();
+        _tvSelectedRecordData.getItems().addAll(recordsView);
     }
 
     private static void showAlert(String title, String headerText, String message, Alert.AlertType alertType) {
@@ -160,6 +180,7 @@ public class SampleOverviewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Initialize the records tree.
         var radiologists = new TreeItem<>("Radiologists");
         _recordsTree.setRoot(radiologists);
         var unknownRadItem = new TreeItem<>(AbnormalityRecord.UNKNOWN_RAD_ID_STRING);
@@ -172,5 +193,12 @@ public class SampleOverviewController implements Initializable {
             radiologists.getChildren().add(radiologist);
             _radId2TreeItem.put(radId, radiologist);
         }
+
+        // Initialize the table view.
+        _clmnShow.setCellValueFactory(cellData -> cellData.getValue().isShownProperty());
+        _clmnShow.setCellFactory(cellData -> new CheckBoxTableCell<>());
+        _clmnRadId.setCellValueFactory(cellData -> cellData.getValue().radIdProperty());
+        _clmnFoundingType.setCellValueFactory(cellData -> cellData.getValue().foundingTypeProperty());
+        _clmnBBoxSize.setCellValueFactory(cellData -> cellData.getValue().boundingBoxSizeProperty());
     }
 }
