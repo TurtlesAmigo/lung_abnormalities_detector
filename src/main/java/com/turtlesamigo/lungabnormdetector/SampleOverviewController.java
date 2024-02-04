@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
+import org.opencv.core.Rect2d;
 
 import java.io.File;
 import java.net.URL;
@@ -131,10 +132,10 @@ public class SampleOverviewController implements Initializable {
         var imageFile = _imageId2File.get(imageId);
         var image = new javafx.scene.image.Image(imageFile.toURI().toString());
         _ivSelectedImage.setImage(image);
-        showRecords(imageId);
+        showRecords(image, imageId);
     }
 
-    private void showRecords(String imageId) {
+    private void showRecords(javafx.scene.image.Image image, String imageId) {
         var records = _imageId2Records.get(imageId);
         _tvSelectedRecordData.getItems().clear();
         var recordsView = records.stream().map(AbnormalityRecordView::new).sorted(
@@ -143,6 +144,30 @@ public class SampleOverviewController implements Initializable {
                         .thenComparing(AbnormalityRecordView::getBoundingBoxSize)
         ).toList();
         _tvSelectedRecordData.getItems().addAll(recordsView);
+        markFindingsOnImage(records, image);
+    }
+
+    private void markFindingsOnImage(List<AbnormalityRecord> records, javafx.scene.image.Image image) {
+        _overlayBBPane.getChildren().clear();
+
+        var recordsWithFindings = records.stream().filter(AbnormalityRecord::isFinding).toList();
+
+        for (var record : recordsWithFindings) {
+            var rect = record.getBoundingBox();
+            var adjustedRect = adjustRect(image.getHeight(), image.getWidth(), _ivSelectedImage.getFitHeight(), _ivSelectedImage.getFitWidth(), rect);
+            var rectView = new javafx.scene.shape.Rectangle(adjustedRect.x, adjustedRect.y, adjustedRect.width, adjustedRect.height);
+            rectView.setStroke(record.getAbnormalityClass().getColor());
+            rectView.setFill(null);
+            _overlayBBPane.getChildren().add(rectView);
+        }
+    }
+
+    private static Rect2d adjustRect(double fullHeight, double fullWidth, double newHeight, double newWidth, Rect2d rect) {
+        double x = rect.x * newWidth / fullWidth;
+        double y = rect.y * newHeight / fullHeight;
+        double width = rect.width * newWidth / fullWidth;
+        double height = rect.height * newHeight / fullHeight;
+        return new Rect2d(x, y, width, height);
     }
 
     private static void showAlert(String title, String headerText, String message, Alert.AlertType alertType) {
