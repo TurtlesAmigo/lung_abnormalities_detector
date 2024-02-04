@@ -55,24 +55,12 @@ class AbnormalityRecordView {
         return _radId.get();
     }
 
-    public void setRadId(String radId) {
-        _radId.set(radId);
-    }
-
     public String getFoundingType() {
         return _foundingType.get();
     }
 
-    public void setFoundingType(String foundingType) {
-        _foundingType.set(foundingType);
-    }
-
     public String getBoundingBoxSize() {
         return _boundingBoxSize.get();
-    }
-
-    public void setBoundingBoxSize(String boundingBoxSize) {
-        _boundingBoxSize.set(boundingBoxSize);
     }
 
     public BooleanProperty isShownProperty() {
