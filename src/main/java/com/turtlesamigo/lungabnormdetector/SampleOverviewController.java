@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
@@ -31,6 +32,8 @@ public class SampleOverviewController implements Initializable {
     private TextField _tfTrainRecordsDir;
     @FXML
     private ImageView _ivSelectedImage;
+    @FXML
+    private Pane _overlayBBPane;
 
     /**
      * Browse the directory containing the abnormality records.
