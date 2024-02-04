@@ -19,8 +19,6 @@ public class MainController {
     @FXML
     public ImageView imageView;
     @FXML
-    private Label welcomeText;
-    @FXML
     private Label fileNameLabel;
     @FXML
     private Label fileSizeLabel;
@@ -78,10 +76,5 @@ public class MainController {
     @FXML
     public void exitApplication(ActionEvent event) {
         System.exit(0);
-    }
-
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
     }
 }
