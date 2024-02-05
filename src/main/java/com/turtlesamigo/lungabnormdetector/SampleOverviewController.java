@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import org.opencv.core.Rect2d;
@@ -27,6 +28,10 @@ public class SampleOverviewController implements Initializable {
     public TableColumn<AbnormalityRecordView, String> _clmnRadId;
     public TableColumn<AbnormalityRecordView, String> _clmnFoundingType;
     public TableColumn<AbnormalityRecordView, String> _clmnBBoxSize;
+    @FXML
+    public Pane _imagePane;
+    @FXML
+    public BorderPane _borderPane;
     @FXML
     private TableView<AbnormalityRecordView> _tvSelectedRecordData;
     @FXML
@@ -236,5 +241,19 @@ public class SampleOverviewController implements Initializable {
         _clmnRadId.setCellValueFactory(cellData -> cellData.getValue().radIdProperty());
         _clmnFoundingType.setCellValueFactory(cellData -> cellData.getValue().foundingTypeProperty());
         _clmnBBoxSize.setCellValueFactory(cellData -> cellData.getValue().boundingBoxSizeProperty());
+
+        // Make columns width to fit the content.
+        _tvSelectedRecordData.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+
+        // Always resize image and overlay pane to fit the parent pane.
+        _imagePane.widthProperty().addListener((observable, oldValue, newValue) -> {
+            _ivSelectedImage.setFitWidth(newValue.doubleValue());
+            _overlayBBPane.setPrefWidth(newValue.doubleValue());
+        });
+        _imagePane.heightProperty().addListener((observable, oldValue, newValue) -> {
+            _ivSelectedImage.setFitHeight(newValue.doubleValue());
+            _overlayBBPane.setPrefHeight(newValue.doubleValue());
+        });
+
     }
 }
