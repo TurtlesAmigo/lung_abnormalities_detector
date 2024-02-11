@@ -39,10 +39,14 @@ public class SampleOverviewController implements Initializable {
         for (TreeItem<String> radiologistItem : radItemFolders) {
             radiologistItem.getChildren().clear();
         }
-    }
 
-    private void fillRadId2TreeItem() {
-        for (var record : _recordSelector.getRecordsAll()) {
+        var trainData = _recordSelector.getTrainData();
+
+        if (trainData == null || !trainData.isValid()) {
+            return;
+        }
+
+        for (var record : trainData.getRecordsAll()) {
             var radId = record.getRadId();
             var imageId = record.getImageId();
             assert _radId2TreeItem.containsKey(radId);
@@ -57,15 +61,16 @@ public class SampleOverviewController implements Initializable {
     @FXML
     public void selectItem(MouseEvent actionEvent) {
         var selectedItem = _recordsTree.getSelectionModel().getSelectedItem();
+        var trainData = _recordSelector.getTrainData();
 
-        if (selectedItem == null) {
+        if (selectedItem == null || trainData == null || !trainData.isValid()) {
             return;
         }
 
         var imageId = selectedItem.getValue();
-        var imageId2File = _recordSelector.getImageId2File();
+        var imageId2File = trainData.getImageId2File();
 
-        if (!_recordSelector.getImageId2File().containsKey(imageId)) {
+        if (!imageId2File.containsKey(imageId)) {
             return;
         }
 
@@ -76,7 +81,13 @@ public class SampleOverviewController implements Initializable {
     }
 
     private void showRecords(javafx.scene.image.Image image, String imageId) {
-        var records = _recordSelector.getImageId2Records().get(imageId);
+        var trainData = _recordSelector.getTrainData();
+
+        if (trainData == null || !trainData.isValid()) {
+            return;
+        }
+
+        var records = trainData.getImageId2Records().get(imageId);
         _tvSelectedRecordData.getItems().clear();
         var recordsView = records.stream().map(AbnormalityRecordView::new).sorted(
                 Comparator.comparing(AbnormalityRecordView::getRadId)
