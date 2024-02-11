@@ -1,4 +1,4 @@
-package com.turtlesamigo.lungabnormdetector;
+package com.turtlesamigo.controllers.helpers;
 
 import com.turtlesamigo.model.AbnormalityRecord;
 import javafx.beans.property.BooleanProperty;
@@ -11,7 +11,7 @@ import org.opencv.core.Rect2d;
  * A view model for the abnormality record.
  * It is used to display the record in the TableView.
  */
-class AbnormalityRecordView {
+public class AbnormalityRecordView {
     private final BooleanProperty _isShown;
     private final StringProperty _radId;
     private final StringProperty _foundingType;

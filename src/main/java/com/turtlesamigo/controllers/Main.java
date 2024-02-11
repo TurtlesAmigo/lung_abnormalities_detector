@@ -1,4 +1,4 @@
-package com.turtlesamigo.lungabnormdetector;
+package com.turtlesamigo.controllers;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

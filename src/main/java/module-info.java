@@ -7,6 +7,8 @@ module com.turtlesamigo.lungabnormdetector {
     requires opencv;
     requires com.opencsv;
 
-    opens com.turtlesamigo.lungabnormdetector to javafx.fxml;
-    exports com.turtlesamigo.lungabnormdetector;
+    opens com.turtlesamigo.controllers to javafx.fxml;
+    exports com.turtlesamigo.controllers;
+    exports com.turtlesamigo.controllers.helpers;
+    opens com.turtlesamigo.controllers.helpers to javafx.fxml;
 }
