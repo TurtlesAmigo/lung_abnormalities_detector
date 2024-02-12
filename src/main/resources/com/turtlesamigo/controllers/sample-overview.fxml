@@ -17,7 +17,7 @@
    <BorderPane fx:id="_borderPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <top>
-          <RecordSelector fx:id="_recordSelector" prefHeight="69.0" prefWidth="2048.0" BorderPane.alignment="CENTER"/>
+          <RecordSelector fx:id="_recordSelector" prefHeight="400" prefWidth="2048.0" BorderPane.alignment="CENTER"/>
       </top>
       <left>
            <HBox alignment="BOTTOM_CENTER" spacing="20" BorderPane.alignment="CENTER">

@@ -12,7 +12,7 @@ import javafx.beans.property.StringProperty;
  */
 public class NamedFlag {
     private static final String namePropertyName = "name";
-    private static final String isCheckedPropertyName = "isChecked";
+    private static final String isCheckedPropertyName = "Show";
 
     private final StringProperty _nameProperty;
     private final BooleanProperty _isCheckedProperty;
@@ -34,7 +34,7 @@ public class NamedFlag {
         return _isCheckedProperty.get();
     }
 
-    public void setChecked(boolean isChecked) {
+    public void setIsChecked(boolean isChecked) {
         _isCheckedProperty.set(isChecked);
     }
 

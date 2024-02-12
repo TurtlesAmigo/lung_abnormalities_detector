@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 
@@ -86,14 +87,20 @@ public class RecordSelector extends VBox {
 
     private void setupTableViews() {
         // Setup _tvAllowedRadiologists.
+        _tvAllowedRadiologists.setEditable(true);
         _tvAllowedRadiologists.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        _tcRadiologistShow.setEditable(true);
+        _tcRadiologistShow.setCellFactory(cellData -> new CheckBoxTableCell<>());
         _tcRadiologistShow.setCellValueFactory(cellData -> cellData.getValue().isCheckedProperty());
         _tcRadiologistName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
 
         // Setup _tvAllowedFindingClasses.
+        _tvAllowedFindingClasses.setEditable(true);
         _tvAllowedFindingClasses.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
-        _tcRadiologistShow.setCellValueFactory(cellData -> cellData.getValue().isCheckedProperty());
-        _tcRadiologistName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        _tcFindingShow.setEditable(true);
+        _tcFindingShow.setCellFactory(cellData -> new CheckBoxTableCell<>());
+        _tcFindingShow.setCellValueFactory(cellData -> cellData.getValue().isCheckedProperty());
+        _tcFindingName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
     }
 
     private void fillTableViews() {
