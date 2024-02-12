@@ -13,4 +13,6 @@ module com.turtlesamigo.lungabnormdetector {
     opens com.turtlesamigo.controllers.helpers to javafx.fxml;
     exports com.turtlesamigo.model;
     opens com.turtlesamigo.model to javafx.fxml;
+    exports com.turtlesamigo.controllers.components;
+    opens com.turtlesamigo.controllers.components to javafx.fxml;
 }

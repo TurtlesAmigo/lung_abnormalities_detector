@@ -1,4 +1,4 @@
-package com.turtlesamigo.controllers;
+package com.turtlesamigo.controllers.components;
 
 import com.turtlesamigo.controllers.helpers.NamedFlag;
 import com.turtlesamigo.model.TrainData;

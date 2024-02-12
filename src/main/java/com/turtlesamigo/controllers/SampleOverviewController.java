@@ -1,5 +1,6 @@
 package com.turtlesamigo.controllers;
 
+import com.turtlesamigo.controllers.components.RecordSelector;
 import com.turtlesamigo.controllers.helpers.AbnormalityRecordView;
 import com.turtlesamigo.model.AbnormalityRecord;
 import javafx.fxml.FXML;
