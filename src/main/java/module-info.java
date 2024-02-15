@@ -6,6 +6,7 @@ module com.turtlesamigo.lungabnormdetector {
     requires com.dlsc.formsfx;
     requires opencv;
     requires com.opencsv;
+    requires org.jetbrains.annotations;
 
     opens com.turtlesamigo.controllers to javafx.fxml;
     exports com.turtlesamigo.controllers;

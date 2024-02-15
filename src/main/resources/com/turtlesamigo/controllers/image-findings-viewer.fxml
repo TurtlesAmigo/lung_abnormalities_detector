@@ -3,37 +3,44 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<fx:root type="javafx.scene.layout.VBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-         minWidth="-Infinity" prefHeight="880.0" prefWidth="1321.0" xmlns="http://javafx.com/javafx/11.0.1"
-         xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="880.0" prefWidth="1321.0" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
       <Label text="File:">
          <HBox.margin>
-            <Insets top="20.0"/>
+            <Insets top="20.0" />
          </HBox.margin>
          <font>
-            <Font size="17.0"/>
+            <Font size="17.0" />
          </font>
       </Label>
-      <TextField editable="false" prefHeight="25.0" prefWidth="499.0" fx:id="_tfFilePath">
+      <TextField fx:id="_tfFilePath" editable="false" prefHeight="25.0" prefWidth="499.0">
          <HBox.margin>
-            <Insets right="20.0" top="20.0"/>
+            <Insets right="20.0" top="20.0" />
          </HBox.margin>
       </TextField>
    </HBox>
-   <StackPane prefHeight="786.0" prefWidth="1321.0" fx:id="_stackPane">
-      <Label text="NO IMAGE" StackPane.alignment="CENTER" fx:id="_lblNoImage"/>
-      <ImageView fitHeight="774.0" fitWidth="1272.0" pickOnBounds="true" preserveRatio="true" fx:id="_imageView">
-         <StackPane.margin>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="10.0"/>
-         </StackPane.margin>
-      </ImageView>
-   </StackPane>
+   <HBox prefHeight="100.0" prefWidth="200.0">
+      <TreeTableView prefHeight="800.0" prefWidth="400.0" fx:id="_ttvRecordFilter" editable="true">
+         <columns>
+            <TreeTableColumn prefWidth="75.0" text="Name" fx:id="_ttcName" editable="false"/>
+            <TreeTableColumn prefWidth="75.0" text="Is Shown" fx:id="_ttcIsShown"/>
+         </columns>
+      </TreeTableView>
+      <StackPane fx:id="_stackPane" prefHeight="800.0" prefWidth="800.0">
+         <Label fx:id="_lblNoImage" text="NO IMAGE" StackPane.alignment="CENTER"/>
+         <ImageView fx:id="_imageView" fitHeight="774.0" fitWidth="1272.0" pickOnBounds="true" preserveRatio="true">
+            <StackPane.margin>
+               <Insets bottom="20.0" left="20.0" right="20.0" top="10.0"/>
+            </StackPane.margin>
+         </ImageView>
+      </StackPane>
+   </HBox>
 </fx:root>
