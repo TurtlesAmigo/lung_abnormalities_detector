@@ -163,7 +163,12 @@ public class ImageFindingsViewer extends VBox {
     }
 
     private void redrawAllRects() {
-        _stackPane.getChildren().clear();
+        _stackPane.getChildren().removeIf(r -> r instanceof Rectangle);
+
+        if (_ttvRecordFilter.getRoot() == null) {
+            return;
+        }
+
         for (var node : _ttvRecordFilter.getRoot().getChildren()) {
             for (var recordNode : node.getChildren()) {
                 var recordItem = recordNode.getValue();

@@ -3,13 +3,13 @@ package com.turtlesamigo.controllers.components;
 import com.turtlesamigo.controllers.helpers.NamedFlag;
 import com.turtlesamigo.model.TrainData;
 import com.turtlesamigo.model.AbnormalityRecord;
+import com.turtlesamigo.utils.UIUtils;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -34,6 +34,8 @@ public class RecordSelector extends VBox {
 
     private TrainData _trainData;
 
+    private final StringProperty _trainRecordsDirProperty = new SimpleStringProperty(this, "trainRecordsDir");
+
     public RecordSelector() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("record-selector.fxml"));
         fxmlLoader.setRoot(this);
@@ -51,6 +53,10 @@ public class RecordSelector extends VBox {
 
     public TrainData getTrainData() {
         return _trainData;
+    }
+
+    public StringProperty trainRecordsDirProperty() {
+        return _trainRecordsDirProperty;
     }
 
     /**
@@ -80,8 +86,16 @@ public class RecordSelector extends VBox {
 
         _trainData = new TrainData(selectedDirectory);
 
-        System.out.println("Selected folder: " + selectedDirectory.getAbsolutePath());
-        _tfTrainRecordsDir.setText(selectedDirectory.getAbsolutePath());
+        if (!_trainData.isValid()) {
+            System.out.println("Invalid train data.");
+            UIUtils.showAlert("Invalid train data", "The selected folder does not contain valid train data.",
+                    "Please, select another folder.", Alert.AlertType.WARNING);
+        }
+
+        String trainRecordsDir = selectedDirectory.getAbsolutePath();
+        System.out.println("Selected folder: " + trainRecordsDir);
+        _tfTrainRecordsDir.setText(trainRecordsDir);
+        _trainRecordsDirProperty.set(trainRecordsDir);
         fillTableViews();
     }
 
