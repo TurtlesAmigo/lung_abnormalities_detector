@@ -1,16 +1,11 @@
 package com.turtlesamigo.controllers.components;
 
+import com.turtlesamigo.controllers.helpers.TreeTableRecordItem;
 import com.turtlesamigo.model.AbnormalityRecord;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import com.turtlesamigo.utils.UIUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -20,7 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect2d;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The component displays the image and the findings.
@@ -34,8 +31,8 @@ public class ImageFindingsViewer extends VBox {
     @FXML private TreeTableColumn<TreeTableRecordItem, String> _ttcName;
     @FXML private TreeTableColumn<TreeTableRecordItem, Boolean> _ttcIsShown;
 
-    private File _imageFile;
     private List<AbnormalityRecord> _records;
+    private final Map<AbnormalityRecord, Rectangle> _record2Rect = new HashMap<>();
 
     public ImageFindingsViewer() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("image-findings-viewer.fxml"));
@@ -52,7 +49,6 @@ public class ImageFindingsViewer extends VBox {
     }
 
     public void fillComponent(File image, List<AbnormalityRecord> records) {
-        _imageFile = image;
         _records = records;
 
         if (image == null) {
@@ -66,8 +62,14 @@ public class ImageFindingsViewer extends VBox {
         _tfFilePath.setText(image.getAbsolutePath());
         _imageView.setImage(new javafx.scene.image.Image(image.toURI().toString()));
 
-        fillTreeTableView();
-        drawBoundingBoxes();
+        // TODO: Check fill map / updateComponent order
+        _record2Rect.clear();
+        for (var record : records) {
+            var rectView = getAdjustedBoundingBoxRect(record);
+            _record2Rect.put(record, rectView);
+        }
+
+        updateComponent();
     }
 
     /**
@@ -76,17 +78,34 @@ public class ImageFindingsViewer extends VBox {
      */
     private void initTreeTableView() {
         _ttcName.setCellValueFactory(cellData -> cellData.getValue().getValue().nameProperty());
+        _ttvRecordFilter.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         _ttcIsShown.setCellValueFactory(cellData -> cellData.getValue().getValue().isShownProperty());
         _ttcIsShown.setCellFactory(tc -> new CheckBoxTreeTableCell<>());
+
+        // TODO: Check, if works.
+        // Resize rects whenever the image is resized.
+        _imageView.fitWidthProperty().bind(_stackPane.widthProperty());
+        _imageView.fitHeightProperty().bind(_stackPane.heightProperty());
+        _imageView.fitWidthProperty().addListener((observable, oldValue, newValue) -> redrawAllRects());
+        _imageView.fitHeightProperty().addListener((observable, oldValue, newValue) -> redrawAllRects());
+
+    }
+
+    private void updateComponent() {
+        refillTreeTableView();
+        redrawAllRects();
     }
 
     /**
      * Fills the tree table view with the records. The records are grouped by
-     * radiologist id and finding class.
+     * radiologist id and finding class. The visibility flag is used to show or hide the
+     * record bounding box on the image. If the radiologist node is hidden, all
+     * records of the radiologist are hidden as well. If the radiologist node is
+     * shown, all records of the radiologist are shown as well.
      */
-    private void fillTreeTableView() {
-        _ttvRecordFilter.setRoot(null);
-        _ttvRecordFilter.setRoot(new javafx.scene.control.TreeItem<>(new TreeTableRecordItem("Radiologists", true)));
+    private void refillTreeTableView() {
+        var root = new javafx.scene.control.TreeItem<>(new TreeTableRecordItem("Radiologists", true));
+        _ttvRecordFilter.setRoot(root);
         _ttvRecordFilter.setShowRoot(false);
 
         var radIds = _records.stream().map(AbnormalityRecord::getRadId).distinct().sorted().toList();
@@ -94,7 +113,10 @@ public class ImageFindingsViewer extends VBox {
         for (var radId : radIds) {
             var radItem = new TreeTableRecordItem(radId, true);
             var radNode = new javafx.scene.control.TreeItem<>(radItem);
-            _ttvRecordFilter.getRoot().getChildren().add(radNode);
+            root.getChildren().add(radNode);
+
+            // Add the listener to the radiologist node.
+            UIUtils.addTreeTableViewFlagListener(radItem, radNode);
 
             var radIdRecords = _records.stream().filter(r -> r.getRadId().equals(radId)).toList();
 
@@ -107,6 +129,9 @@ public class ImageFindingsViewer extends VBox {
                 var findingNode = new javafx.scene.control.TreeItem<>(findingItem);
                 radNode.getChildren().add(findingNode);
 
+                // Add the listener to the finding node.
+                UIUtils.addTreeTableViewFlagListener(findingItem, findingNode);
+
                 var findingClassRecords = radIdRecords.stream()
                         .filter(r -> r.getAbnormalityClass().equals(findingClass))
                         .toList();
@@ -115,31 +140,40 @@ public class ImageFindingsViewer extends VBox {
                     var recordItem = new TreeTableRecordItem(record.getBoundingBox().toString(), true);
                     var recordNode = new javafx.scene.control.TreeItem<>(recordItem);
                     findingNode.getChildren().add(recordNode);
+                    recordItem.isShownProperty().addListener((observable, oldValue, newValue) -> {
+                        updateFoundingRect(record, false, newValue);
+                    });
                 }
             }
         }
     }
 
-    private void drawBoundingBoxes() {
+    private void updateFoundingRect(AbnormalityRecord record, boolean recalculateBounds, boolean isShown) {
+        var rectView = _record2Rect.get(record);
+        _stackPane.getChildren().remove(rectView);
+
+        if (recalculateBounds) {
+            rectView = getAdjustedBoundingBoxRect(record);
+            _record2Rect.replace(record, rectView);
+        }
+
+        if (isShown) {
+            _stackPane.getChildren().add(rectView);
+        }
+    }
+
+    private void redrawAllRects() {
         _stackPane.getChildren().clear();
         for (var node : _ttvRecordFilter.getRoot().getChildren()) {
             for (var recordNode : node.getChildren()) {
                 var recordItem = recordNode.getValue();
-
-                if (!recordItem.isShown()) {
-                    continue;
-                }
-
-                var rectView = getAdjustedBoundingBoxRect(recordItem);
-                _stackPane.getChildren().add(rectView);
+                updateFoundingRect(recordItem.getRecord(), true, recordItem.isShown());
             }
         }
     }
 
     @NotNull
-    private Rectangle getAdjustedBoundingBoxRect(TreeTableRecordItem recordItem) {
-        var record = recordItem.getRecord();
-
+    private Rectangle getAdjustedBoundingBoxRect(AbnormalityRecord record) {
         var rect = record.getBoundingBox();
         var image = _imageView.getImage();
         var adjustedRect = adjustRect(image.getHeight(), image.getWidth(),
@@ -160,12 +194,15 @@ public class ImageFindingsViewer extends VBox {
      * @param rect The bounding box to adjust.
      * @return The adjusted bounding box.
      */
-    private static Rect2d adjustRect(double fullHeight, double fullWidth, double newHeight, double newWidth, Rect2d rect) {
+    private static Rect2d adjustRect(double fullHeight,
+                                     double fullWidth,
+                                     double newHeight,
+                                     double newWidth,
+                                     Rect2d rect) {
         double x = rect.x * newWidth / fullWidth;
         double y = rect.y * newHeight / fullHeight;
         double width = rect.width * newWidth / fullWidth;
         double height = rect.height * newHeight / fullHeight;
         return new Rect2d(x, y, width, height);
     }
-
 }
