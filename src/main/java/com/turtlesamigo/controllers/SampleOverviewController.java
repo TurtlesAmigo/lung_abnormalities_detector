@@ -2,17 +2,15 @@ package com.turtlesamigo.controllers;
 
 import com.turtlesamigo.controllers.components.ImageFindingsViewer;
 import com.turtlesamigo.controllers.components.RecordSelector;
-import com.turtlesamigo.controllers.helpers.AbnormalityRecordView;
 import com.turtlesamigo.model.AbnormalityRecord;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import org.opencv.core.Rect2d;
 
 import java.net.URL;
 import java.util.*;
@@ -25,11 +23,12 @@ public class SampleOverviewController implements Initializable {
     @FXML
     public BorderPane _borderPane;
     public ImageFindingsViewer _imageFindingsViewer;
+    public PieChart _pieChart;
     @FXML
     private Pane _overlayBBPane;
     @FXML private RecordSelector _recordSelector;
 
-    private void clearRadItemFolders() {
+    private void refillRadItemFolders() {
         List<TreeItem<String>> radItemFolders = _recordsTree.getRoot().getChildren();
         for (TreeItem<String> radiologistItem : radItemFolders) {
             radiologistItem.getChildren().clear();
@@ -91,7 +90,42 @@ public class SampleOverviewController implements Initializable {
         }
 
         _recordSelector.trainRecordsDirProperty().addListener((observable, oldValue, newValue) -> {
-            clearRadItemFolders();
+            refillRadItemFolders();
+            fillPieChart();
         });
+    }
+
+    private void fillPieChart() {
+        var trainData = _recordSelector.getTrainData();
+
+        if (trainData == null || !trainData.isValid()) {
+            return;
+        }
+
+        var records = trainData.getRecordsAll();
+        var findingClasses = records.stream()
+                .map(AbnormalityRecord::getAbnormalityClass)
+                .distinct()
+                .sorted()
+                .toList();
+
+        var findingClass2Count = new HashMap<String, Integer>();
+
+        for (var findingClass : findingClasses) {
+            findingClass2Count.put(findingClass.getClassName(), 0);
+        }
+
+        for (var record : records) {
+            var findingClass = record.getAbnormalityClass().getClassName();
+            findingClass2Count.put(findingClass, findingClass2Count.get(findingClass) + 1);
+        }
+
+        var pieChartData = new ArrayList<PieChart.Data>();
+
+        for (var entry : findingClass2Count.entrySet()) {
+            pieChartData.add(new PieChart.Data(entry.getKey() + " - " + entry.getValue(), entry.getValue()));
+        }
+
+        _pieChart.setData(FXCollections.observableArrayList(pieChartData));
     }
 }
