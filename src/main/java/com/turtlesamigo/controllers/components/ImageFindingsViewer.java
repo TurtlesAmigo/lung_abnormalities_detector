@@ -8,7 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class ImageFindingsViewer extends VBox {
     @FXML private TextField _tfFilePath;
-    @FXML private StackPane _stackPane;
+    @FXML private Pane _stackPane;
     @FXML private Label _lblNoImage;
     @FXML private ImageView _imageView;
     @FXML private TreeTableView<TreeTableRecordItem> _ttvRecordFilter;
@@ -53,12 +53,10 @@ public class ImageFindingsViewer extends VBox {
 
         if (imageFile == null) {
             _lblNoImage.setVisible(true);
-            _stackPane.setVisible(false);
             return;
         }
 
         _lblNoImage.setVisible(false);
-        _stackPane.setVisible(true);
         _tfFilePath.setText(imageFile.getAbsolutePath());
         var image = new javafx.scene.image.Image(imageFile.toURI().toString());
         _imageView.setImage(image);
@@ -87,9 +85,9 @@ public class ImageFindingsViewer extends VBox {
         // Resize rects whenever the image is resized.
         _imageView.fitWidthProperty().bind(_stackPane.widthProperty());
         _imageView.fitHeightProperty().bind(_stackPane.heightProperty());
+
         _imageView.fitWidthProperty().addListener((observable, oldValue, newValue) -> redrawAllRects());
         _imageView.fitHeightProperty().addListener((observable, oldValue, newValue) -> redrawAllRects());
-
     }
 
     private void updateComponent() {
@@ -138,7 +136,7 @@ public class ImageFindingsViewer extends VBox {
                         .toList();
 
                 for (var record : findingClassRecords) {
-                    var recordItem = new TreeTableRecordItem(record.getBoundingBox().toString(), true);
+                    var recordItem = new TreeTableRecordItem(record);
                     var recordNode = new javafx.scene.control.TreeItem<>(recordItem);
                     findingNode.getChildren().add(recordNode);
                     recordItem.isShownProperty().addListener((observable, oldValue, newValue) -> {
@@ -150,6 +148,10 @@ public class ImageFindingsViewer extends VBox {
     }
 
     private void updateFoundingRect(AbnormalityRecord record, boolean recalculateBounds, boolean isShown) {
+        if (record == null || !record.isFinding()) {
+            return;
+        }
+
         var rectView = _record2Rect.get(record);
         _stackPane.getChildren().remove(rectView);
 
@@ -165,16 +167,28 @@ public class ImageFindingsViewer extends VBox {
 
     private void redrawAllRects() {
         _stackPane.getChildren().removeIf(r -> r instanceof Rectangle);
+        var root = _ttvRecordFilter.getRoot();
 
-        if (_ttvRecordFilter.getRoot() == null) {
+        if (root == null) {
             return;
         }
 
-        for (var node : _ttvRecordFilter.getRoot().getChildren()) {
-            for (var recordNode : node.getChildren()) {
-                var recordItem = recordNode.getValue();
-                updateFoundingRect(recordItem.getRecord(), true, recordItem.isShown());
+        redrawAllChildren(root);
+    }
+
+    private void redrawAllChildren(TreeItem<TreeTableRecordItem> root) {
+        var recordChildren = root.getChildren().stream().filter(r -> r.getValue().getRecord() != null).toList();
+
+        if (recordChildren.isEmpty()) {
+            for (var node : root.getChildren()) {
+                redrawAllChildren(node);
             }
+            return;
+        }
+
+        for (var recordNode : recordChildren) {
+            var recordItem = recordNode.getValue();
+            updateFoundingRect(recordItem.getRecord(), true, recordItem.isShown());
         }
     }
 

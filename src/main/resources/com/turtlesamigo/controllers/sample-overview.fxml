@@ -14,20 +14,28 @@
 <AnchorPane minHeight="1024" minWidth="2048" prefHeight="1024" prefWidth="2048" xmlns="http://javafx.com/javafx/11.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.turtlesamigo.controllers.SampleOverviewController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
     <VBox alignment="CENTER" prefHeight="1024.0" prefWidth="2048.0">
         <RecordSelector fx:id="_recordSelector" prefHeight="400" prefWidth="2048.0" BorderPane.alignment="CENTER"/>
-        <TabPane VBox.vgrow="ALWAYS">
-            <Tab text="Records" closable="false">
-                <HBox alignment="BOTTOM_CENTER" spacing="20" BorderPane.alignment="CENTER">
-                    <TreeView fx:id="_recordsTree" onMouseClicked="#selectItem" HBox.hgrow="ALWAYS">
-                        <HBox.margin>
-                            <Insets bottom="20.0" left="20.0" right="10.0" />
-                        </HBox.margin>
-                    </TreeView>
-                <ImageFindingsViewer fx:id="_imageFindingsViewer" prefHeight="800.0" prefWidth="800.0"
-                                     BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS"/>
-                </HBox>
-            </Tab>
-        </TabPane>
+        <AnchorPane>
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+            </padding>
+            <TabPane VBox.vgrow="ALWAYS">
+                <Tab text="Records" closable="false">
+                    <HBox alignment="BOTTOM_CENTER" spacing="20" BorderPane.alignment="CENTER">
+                        <TreeView fx:id="_recordsTree" onMouseClicked="#selectItem" HBox.hgrow="ALWAYS">
+                            <HBox.margin>
+                                <Insets bottom="20.0" left="20.0" right="10.0" />
+                            </HBox.margin>
+                        </TreeView>
+                    <ImageFindingsViewer fx:id="_imageFindingsViewer" prefHeight="800.0" prefWidth="800.0"
+                                         BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                </Tab>
+            </TabPane>
+        </AnchorPane>
     </VBox>
 </AnchorPane>
