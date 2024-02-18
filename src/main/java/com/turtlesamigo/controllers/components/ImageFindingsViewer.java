@@ -48,10 +48,10 @@ public class ImageFindingsViewer extends VBox {
         initTreeTableView();
     }
 
-    public void fillComponent(File image, List<AbnormalityRecord> records) {
+    public void fillComponent(File imageFile, List<AbnormalityRecord> records) {
         _records = records;
 
-        if (image == null) {
+        if (imageFile == null) {
             _lblNoImage.setVisible(true);
             _stackPane.setVisible(false);
             return;
@@ -59,8 +59,9 @@ public class ImageFindingsViewer extends VBox {
 
         _lblNoImage.setVisible(false);
         _stackPane.setVisible(true);
-        _tfFilePath.setText(image.getAbsolutePath());
-        _imageView.setImage(new javafx.scene.image.Image(image.toURI().toString()));
+        _tfFilePath.setText(imageFile.getAbsolutePath());
+        var image = new javafx.scene.image.Image(imageFile.toURI().toString());
+        _imageView.setImage(image);
 
         // TODO: Check fill map / updateComponent order
         _record2Rect.clear();
@@ -183,31 +184,29 @@ public class ImageFindingsViewer extends VBox {
         var image = _imageView.getImage();
         var adjustedRect = adjustRect(image.getHeight(), image.getWidth(),
                 _imageView.getFitHeight(), _imageView.getFitWidth(), rect);
-        var rectView = new Rectangle(adjustedRect.x, adjustedRect.y,
-                adjustedRect.width, adjustedRect.height);
-        rectView.setStroke(record.getAbnormalityClass().getColor());
-        rectView.setFill(null);
-        return rectView;
+        adjustedRect.setStroke(record.getAbnormalityClass().getColor());
+        adjustedRect.setFill(null);
+        return adjustedRect;
     }
 
     /**
      * Adjusts the bounding box coordinates to the new image size.
-     * @param fullHeight The full height of the original image.
-     * @param fullWidth The full width of the original image.
+     * @param originalHeight The full height of the original image.
+     * @param originalWidth The full width of the original image.
      * @param newHeight The new height of the image.
      * @param newWidth The new width of the image.
      * @param rect The bounding box to adjust.
      * @return The adjusted bounding box.
      */
-    private static Rect2d adjustRect(double fullHeight,
-                                     double fullWidth,
+    private static Rectangle adjustRect(double originalHeight,
+                                     double originalWidth,
                                      double newHeight,
                                      double newWidth,
                                      Rect2d rect) {
-        double x = rect.x * newWidth / fullWidth;
-        double y = rect.y * newHeight / fullHeight;
-        double width = rect.width * newWidth / fullWidth;
-        double height = rect.height * newHeight / fullHeight;
-        return new Rect2d(x, y, width, height);
+        double x = rect.x * newWidth / originalWidth;
+        double y = rect.y * newHeight / originalHeight;
+        double width = rect.width * newWidth / originalWidth;
+        double height = rect.height * newHeight / originalHeight;
+        return new Rectangle(x, y, width, height);
     }
 }
