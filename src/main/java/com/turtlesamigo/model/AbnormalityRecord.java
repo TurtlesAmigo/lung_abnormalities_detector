@@ -42,4 +42,12 @@ public class AbnormalityRecord {
     public boolean isFinding() {
         return _abnormalityClass.isFinding();
     }
+
+    public String getBoundingBoxString() {
+        if (_boundingBox == null) {
+            return "-";
+        }
+
+        return _boundingBox.toString();
+    }
 }

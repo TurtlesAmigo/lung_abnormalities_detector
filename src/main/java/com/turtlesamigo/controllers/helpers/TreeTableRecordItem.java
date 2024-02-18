@@ -24,7 +24,7 @@ public class TreeTableRecordItem {
     }
 
     public TreeTableRecordItem(AbnormalityRecord record) {
-        this(record.getBoundingBox().toString(), true, record);
+        this(record.getBoundingBoxString(), record.isFinding(), record);
     }
 
     private TreeTableRecordItem(String name, boolean isShown, AbnormalityRecord record) {

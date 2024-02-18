@@ -33,6 +33,7 @@ public class ImageFindingsViewer extends VBox {
 
     private List<AbnormalityRecord> _records;
     private final Map<AbnormalityRecord, Rectangle> _record2Rect = new HashMap<>();
+    private final Map<AbnormalityRecord, Label> _record2Label = new HashMap<>();
 
     public ImageFindingsViewer() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("image-findings-viewer.fxml"));
@@ -63,9 +64,13 @@ public class ImageFindingsViewer extends VBox {
 
         // TODO: Check fill map / updateComponent order
         _record2Rect.clear();
-        for (var record : records) {
+        _record2Label.clear();
+        var findings = records.stream().filter(AbnormalityRecord::isFinding).toList();
+        for (var record : findings) {
             var rectView = getAdjustedBoundingBoxRect(record);
             _record2Rect.put(record, rectView);
+            var label = new Label(record.getRadId() + " - " + record.getAbnormalityClass().getClassName());
+            _record2Label.put(record, label);
         }
 
         updateComponent();
@@ -139,6 +144,11 @@ public class ImageFindingsViewer extends VBox {
                     var recordItem = new TreeTableRecordItem(record);
                     var recordNode = new javafx.scene.control.TreeItem<>(recordItem);
                     findingNode.getChildren().add(recordNode);
+
+                    if (!record.isFinding()) {
+                        continue;
+                    }
+
                     recordItem.isShownProperty().addListener((observable, oldValue, newValue) -> {
                         updateFoundingRect(record, false, newValue);
                     });
@@ -153,7 +163,9 @@ public class ImageFindingsViewer extends VBox {
         }
 
         var rectView = _record2Rect.get(record);
+        var label = _record2Label.get(record);
         _stackPane.getChildren().remove(rectView);
+        _stackPane.getChildren().remove(label);
 
         if (recalculateBounds) {
             rectView = getAdjustedBoundingBoxRect(record);
@@ -162,11 +174,16 @@ public class ImageFindingsViewer extends VBox {
 
         if (isShown) {
             _stackPane.getChildren().add(rectView);
+            // Add label with the radiologist id and finding name close to rect.
+            label.setLayoutX(rectView.getX());
+            label.setLayoutY(rectView.getY());
+            _stackPane.getChildren().add(label);
         }
     }
 
     private void redrawAllRects() {
         _stackPane.getChildren().removeIf(r -> r instanceof Rectangle);
+        _stackPane.getChildren().removeIf(r -> r instanceof Label);
         var root = _ttvRecordFilter.getRoot();
 
         if (root == null) {
