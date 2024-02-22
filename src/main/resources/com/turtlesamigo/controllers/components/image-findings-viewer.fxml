@@ -14,7 +14,7 @@
 
 <?import javafx.scene.layout.Pane?>
 <fx:root prefHeight="880.0" prefWidth="1600" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/11.0.1"
-         xmlns:fx="http://javafx.com/fxml/1">
+         xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../styles/image-findings-viewer-style.css">
    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" VBox.vgrow="NEVER">
       <Label text="File:" HBox.hgrow="NEVER">
          <HBox.margin>

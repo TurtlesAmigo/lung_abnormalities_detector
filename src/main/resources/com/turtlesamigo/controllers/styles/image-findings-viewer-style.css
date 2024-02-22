@@ -1,0 +1,46 @@
+/* ImageFindingsViewer settings */
+.image-findings-viewer {
+    -fx-background-color: #ffffff; /* White background for clarity */
+}
+
+/* TextField settings */
+.image-findings-viewer .text-field {
+    -fx-background-color: #f8f8f8; /* Light grey background */
+    -fx-border-color: #d9d9d9; /* Light grey border */
+    -fx-border-width: 1px; /* Border width */
+}
+
+/* TreeTableView settings */
+.image-findings-viewer .tree-table-view {
+    -fx-background-color: #ffffff; /* White background for clarity */
+    -fx-border-color: #d9d9d9; /* Light grey border */
+    -fx-border-width: 1px; /* Border width */
+}
+
+.image-findings-viewer .tree-table-view .column-header {
+    -fx-background-color: #f0f0f0; /* Light grey background for column headers */
+    -fx-padding: 5px; /* Padding around text */
+    -fx-font-size: 14px; /* Font size */
+    -fx-font-weight: bold; /* Bold font for headers */
+}
+
+.image-findings-viewer .tree-table-row-cell {
+    -fx-border-color: #d9d9d9; /* Light grey border */
+    -fx-border-width: 0 0 1 0; /* Border at the bottom of each row */
+}
+
+.image-findings-viewer .tree-table-row-cell:odd {
+    -fx-background-color: #f8f8f8; /* Light grey background for odd rows for better readability */
+}
+
+.image-findings-viewer .tree-table-cell {
+    -fx-padding: 5px; /* Padding around text in cells */
+    -fx-font-size: 14px; /* Font size */
+}
+
+/* ImageView settings */
+.image-findings-viewer .image-view {
+    -fx-background-color: #ffffff; /* White background for clarity */
+    -fx-border-color: #d9d9d9; /* Light grey border */
+    -fx-border-width: 2px; /* Border width */
+}

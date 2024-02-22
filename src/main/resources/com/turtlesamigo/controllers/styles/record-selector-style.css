@@ -1,51 +1,45 @@
-/* Background color is set to a light shade of blue for a calming effect */
-.tree-view {
-    -fx-background-color: #e6f7ff;
-    -fx-padding: 10px;
+/* RecordSelector settings */
+.record-selector {
+    -fx-background-color: #ffffff; /* White background for clarity */
 }
 
-/* Image view background is white for clarity, border is a darker shade of blue */
-.image-view {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #1890ff;
-    -fx-border-width: 2px;
+/* Button settings */
+.record-selector .button {
+    -fx-background-color: #1890ff; /* Dark blue background */
+    -fx-text-fill: #ffffff; /* White text for contrast */
 }
 
-/* Text color is set to a darker shade for readability against the light background */
-.text {
-    -fx-fill: #001529;
-}
-
-/* Button color is set to a darker shade of blue, text color is white for contrast */
-.button {
-    -fx-background-color: #1890ff;
-    -fx-text-fill: #ffffff;
+/* TextField settings */
+.record-selector .text-field {
+    -fx-background-color: #f8f8f8; /* Light grey background */
+    -fx-border-color: #d9d9d9; /* Light grey border */
+    -fx-border-width: 1px; /* Border width */
 }
 
 /* TableView settings */
-.table-view {
+.record-selector .table-view {
     -fx-background-color: #ffffff; /* White background for clarity */
     -fx-border-color: #d9d9d9; /* Light grey border */
     -fx-border-width: 1px; /* Border width */
 }
 
-.table-view .column-header {
+.record-selector .table-view .column-header {
     -fx-background-color: #f0f0f0; /* Light grey background for column headers */
     -fx-padding: 5px; /* Padding around text */
     -fx-font-size: 14px; /* Font size */
     -fx-font-weight: bold; /* Bold font for headers */
 }
 
-.table-row-cell {
+.record-selector .table-row-cell {
     -fx-border-color: #d9d9d9; /* Light grey border */
     -fx-border-width: 0 0 1 0; /* Border at the bottom of each row */
 }
 
-.table-row-cell:odd {
+.record-selector .table-row-cell:odd {
     -fx-background-color: #f8f8f8; /* Light grey background for odd rows for better readability */
 }
 
-.table-cell {
+.record-selector .table-cell {
     -fx-padding: 5px; /* Padding around text in cells */
     -fx-font-size: 14px; /* Font size */
 }

@@ -11,7 +11,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.chart.PieChart?>
-<AnchorPane minHeight="1124" minWidth="2600" prefHeight="1124" prefWidth="2600" xmlns="http://javafx.com/javafx/11.0.1"
+<AnchorPane minHeight="1124" minWidth="2800" prefHeight="1124" prefWidth="2800" xmlns="http://javafx.com/javafx/11.0.1"
             xmlns:fx="http://javafx.com/fxml/1" stylesheets="@styles/sample-overview-style.css"
             fx:controller="com.turtlesamigo.controllers.SampleOverviewController">
     <padding>
@@ -20,7 +20,7 @@
     <HBox spacing="20"
           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
           AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
-        <RecordSelector fx:id="_recordSelector" HBox.hgrow="NEVER" VBox.vgrow="ALWAYS" prefWidth="600"
+        <RecordSelector fx:id="_recordSelector" HBox.hgrow="NEVER" VBox.vgrow="ALWAYS" prefWidth="800"
                         AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
                         AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
         <TabPane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" prefWidth="2200"
