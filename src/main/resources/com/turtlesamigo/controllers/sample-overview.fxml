@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
 <?import com.turtlesamigo.controllers.components.RecordSelector?>
@@ -12,39 +11,40 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.chart.PieChart?>
-<AnchorPane minHeight="1024" minWidth="2048" prefHeight="1124" prefWidth="1648" xmlns="http://javafx.com/javafx/11.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane minHeight="1124" minWidth="2600" prefHeight="1124" prefWidth="2600" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" stylesheets="@styles/sample-overview-style.css"
             fx:controller="com.turtlesamigo.controllers.SampleOverviewController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
-    <VBox alignment="CENTER" prefHeight="1024.0" prefWidth="2048.0">
-        <AnchorPane>
-            <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-            </padding>
-            <RecordSelector fx:id="_recordSelector" prefHeight="400" prefWidth="2048.0" BorderPane.alignment="CENTER"/>
-        </AnchorPane>
-        <AnchorPane prefWidth="2048" prefHeight="624">
-            <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-            </padding>
-            <TabPane VBox.vgrow="ALWAYS" prefHeight="624" prefWidth="2048">
-                <Tab text="Records" closable="false">
-                    <HBox alignment="BOTTOM_CENTER" spacing="20" BorderPane.alignment="CENTER">
-                        <TreeView fx:id="_recordsTree" onMouseClicked="#selectItem" HBox.hgrow="ALWAYS">
-                            <HBox.margin>
-                                <Insets bottom="20.0" left="20.0" right="10.0" />
-                            </HBox.margin>
-                        </TreeView>
-                    <ImageFindingsViewer fx:id="_imageFindingsViewer" prefHeight="800.0" prefWidth="800.0"
-                                         BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS"/>
-                    </HBox>
-                </Tab>
-                <Tab text="Findings class distribution" closable="false">
-                   <PieChart fx:id="_pieChart" VBox.vgrow="ALWAYS"/>
-                </Tab>
-            </TabPane>
-        </AnchorPane>
-    </VBox>
+    <HBox spacing="20"
+          AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+          AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+        <RecordSelector fx:id="_recordSelector" HBox.hgrow="NEVER" VBox.vgrow="ALWAYS" prefWidth="600"
+                        AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+                        AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
+        <TabPane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" prefWidth="2200"
+                 AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+                 AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+            <Tab text="Records" closable="false">
+                <HBox alignment="BOTTOM_CENTER" spacing="20" prefWidth="2000"
+                      AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+                      AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+                    <TreeView fx:id="_recordsTree" onMouseClicked="#selectItem" HBox.hgrow="SOMETIMES"
+                              VBox.vgrow="ALWAYS" prefWidth="400">
+                        <HBox.margin>
+                            <Insets bottom="20.0" left="20.0" right="10.0" />
+                        </HBox.margin>
+                    </TreeView>
+                    <ImageFindingsViewer fx:id="_imageFindingsViewer" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"
+                                         prefWidth="1600"
+                                         AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+                                         AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
+                </HBox>
+            </Tab>
+            <Tab text="Findings class distribution" closable="false">
+                <PieChart fx:id="_pieChart" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS"/>
+            </Tab>
+        </TabPane>
+    </HBox>
 </AnchorPane>

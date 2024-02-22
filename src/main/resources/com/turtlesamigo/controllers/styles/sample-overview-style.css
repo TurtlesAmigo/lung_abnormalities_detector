@@ -1,0 +1,10 @@
+.tree-view {
+    -fx-background-color: #f0f0f0;
+    -fx-padding: 10px;
+}
+
+.image-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #000000;
+    -fx-border-width: 2px;
+}
