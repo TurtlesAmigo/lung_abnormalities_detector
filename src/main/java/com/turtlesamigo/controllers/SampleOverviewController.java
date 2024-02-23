@@ -1,7 +1,7 @@
 package com.turtlesamigo.controllers;
 
 import com.turtlesamigo.controllers.components.ImageFindingsViewer;
-import com.turtlesamigo.controllers.components.RecordSelector;
+import com.turtlesamigo.controllers.components.RecordsLoader;
 import com.turtlesamigo.model.AbnormalityRecord;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -26,7 +26,7 @@ public class SampleOverviewController implements Initializable {
     public PieChart _pieChart;
     @FXML
     private Pane _overlayBBPane;
-    @FXML private RecordSelector _recordSelector;
+    @FXML private RecordsLoader _recordsLoader;
 
     private void refillRadItemFolders() {
         List<TreeItem<String>> radItemFolders = _recordsTree.getRoot().getChildren();
@@ -34,7 +34,7 @@ public class SampleOverviewController implements Initializable {
             radiologistItem.getChildren().clear();
         }
 
-        var trainData = _recordSelector.getTrainData();
+        var trainData = _recordsLoader.getTrainData();
 
         if (trainData == null || !trainData.isValid()) {
             return;
@@ -55,7 +55,7 @@ public class SampleOverviewController implements Initializable {
     @FXML
     public void selectItem(MouseEvent actionEvent) {
         var selectedItem = _recordsTree.getSelectionModel().getSelectedItem();
-        var trainData = _recordSelector.getTrainData();
+        var trainData = _recordsLoader.getTrainData();
 
         if (selectedItem == null || trainData == null || !trainData.isValid()) {
             return;
@@ -89,14 +89,14 @@ public class SampleOverviewController implements Initializable {
             _radId2TreeItem.put(radId, radiologist);
         }
 
-        _recordSelector.trainRecordsDirProperty().addListener((observable, oldValue, newValue) -> {
+        _recordsLoader.trainRecordsDirProperty().addListener((observable, oldValue, newValue) -> {
             refillRadItemFolders();
             fillPieChart();
         });
     }
 
     private void fillPieChart() {
-        var trainData = _recordSelector.getTrainData();
+        var trainData = _recordsLoader.getTrainData();
 
         if (trainData == null || !trainData.isValid()) {
             return;

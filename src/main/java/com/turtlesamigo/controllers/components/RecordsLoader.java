@@ -17,10 +17,9 @@ import javafx.stage.DirectoryChooser;
 import java.io.File;
 
 /**
- * The component allows to load and filter
- * training data.
+ * The component allows to load the training data.
  */
-public class RecordSelector extends VBox {
+public class RecordsLoader extends VBox {
     @FXML private Button _btnBrowse;
     @FXML private TextField _tfTrainRecordsDir;
 
@@ -36,8 +35,8 @@ public class RecordSelector extends VBox {
 
     private final StringProperty _trainRecordsDirProperty = new SimpleStringProperty(this, "trainRecordsDir");
 
-    public RecordSelector() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("record-selector.fxml"));
+    public RecordsLoader() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("records-loader.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

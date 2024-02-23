@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-<?import com.turtlesamigo.controllers.components.RecordSelector?>
+<?import com.turtlesamigo.controllers.components.RecordsLoader?>
 <?import com.turtlesamigo.controllers.components.ImageFindingsViewer?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.TabPane?>
@@ -20,9 +20,9 @@
     <HBox spacing="20"
           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
           AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
-        <RecordSelector fx:id="_recordSelector" HBox.hgrow="NEVER" VBox.vgrow="ALWAYS" prefWidth="800"
-                        AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
-                        AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
+        <RecordsLoader fx:id="_recordsLoader" HBox.hgrow="NEVER" VBox.vgrow="ALWAYS" prefWidth="800"
+                       AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+                       AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
         <TabPane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" prefWidth="2200"
                  AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
                  AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
