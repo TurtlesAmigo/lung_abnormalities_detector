@@ -44,6 +44,21 @@ public class TrainData {
                 && !CollectionUtils.isNullOrEmpty(_imageId2File.keySet());
     }
 
+    public TrainData(File trainDirectory, List<AbnormalityRecord> recordsAll) {
+        _trainDirectory = trainDirectory;
+        _recordsAll = recordsAll;
+
+        _imageId2Records = new MapOfLists<>();
+        for (var record : _recordsAll) {
+            _imageId2Records.add(record.getImageId(), record);
+        }
+
+        buildImage2FileMap();
+
+        _isValid = _trainDirectory != null && !CollectionUtils.isNullOrEmpty(_recordsAll)
+                && !CollectionUtils.isNullOrEmpty(_imageId2File.keySet());
+    }
+
     public List<AbnormalityRecord> getRecordsAll() {
         return _recordsAll;
     }
@@ -80,38 +95,5 @@ public class TrainData {
             var imageId = imageFile.getName().split("\\.")[0];
             _imageId2File.put(imageId, imageFile);
         }
-    }
-
-    private TrainData(File trainDirectory, List<AbnormalityRecord> recordsAll) {
-        _trainDirectory = trainDirectory;
-        _recordsAll = recordsAll;
-
-        _imageId2Records = new MapOfLists<>();
-        for (var record : _recordsAll) {
-            _imageId2Records.add(record.getImageId(), record);
-        }
-
-        buildImage2FileMap();
-
-        _isValid = _trainDirectory != null && !CollectionUtils.isNullOrEmpty(_recordsAll)
-                && !CollectionUtils.isNullOrEmpty(_imageId2File.keySet());
-    }
-
-    public static TrainData filterTrainData(TrainData trainData, IRecordFilter ... recordFilters) {
-        if (trainData == null || !trainData.isValid()) {
-            return trainData;
-        }
-
-        var recordsAll = trainData.getRecordsAll();
-        var filteredRecords = recordsAll.stream().filter(record -> {
-            for (var recordFilter : recordFilters) {
-                if (!recordFilter.isMatching(record)) {
-                    return false;
-                }
-            }
-            return true;
-        }).toList();
-
-        return new TrainData(trainData.getTrainDirectory(), filteredRecords);
     }
 }

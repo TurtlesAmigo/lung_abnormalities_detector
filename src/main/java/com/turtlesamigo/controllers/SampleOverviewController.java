@@ -2,39 +2,50 @@ package com.turtlesamigo.controllers;
 
 import com.turtlesamigo.controllers.components.ImageFindingsViewer;
 import com.turtlesamigo.controllers.components.RecordsLoader;
+import com.turtlesamigo.controllers.helpers.NamedFlag;
 import com.turtlesamigo.model.AbnormalityRecord;
+import com.turtlesamigo.model.TrainData;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SampleOverviewController implements Initializable {
     private final HashMap<String, TreeItem<String>> _radId2TreeItem = new HashMap<>();
     public TreeView<String> _recordsTree;
+    @FXML private Pane _imagePane;
+    @FXML private BorderPane _borderPane;
     @FXML
-    public Pane _imagePane;
-    @FXML
-    public BorderPane _borderPane;
-    public ImageFindingsViewer _imageFindingsViewer;
-    public PieChart _pieChart;
-    @FXML
-    private Pane _overlayBBPane;
+    private ImageFindingsViewer _imageFindingsViewer;
+    @FXML private PieChart _pieChart;
+    @FXML private Pane _overlayBBPane;
     @FXML private RecordsLoader _recordsLoader;
 
-    private void refillRadItemFolders() {
+    // The table view for the radiologists filtering.
+    @FXML private TableView<NamedFlag> _tvAllowedRadiologists;
+    @FXML private TableColumn<NamedFlag, Boolean> _tcRadiologistShow;
+    @FXML private TableColumn<NamedFlag, String> _tcRadiologistName;
+
+    // The table view for the finding classes filtering.
+    @FXML private TableView<NamedFlag> _tvAllowedFindingClasses;
+    @FXML private TableColumn<NamedFlag, Boolean> _tcFindingShow;
+    @FXML private TableColumn<NamedFlag, String> _tcFindingName;
+
+    private void refillRadItemFolders(TrainData trainData) {
         List<TreeItem<String>> radItemFolders = _recordsTree.getRoot().getChildren();
         for (TreeItem<String> radiologistItem : radItemFolders) {
             radiologistItem.getChildren().clear();
         }
-
-        var trainData = _recordsLoader.getTrainData();
 
         if (trainData == null || !trainData.isValid()) {
             return;
@@ -50,10 +61,9 @@ public class SampleOverviewController implements Initializable {
 
     /**
      * Show the selected image and its records in the table view.
-     * @param actionEvent
      */
     @FXML
-    public void selectItem(MouseEvent actionEvent) {
+    public void selectItem() {
         var selectedItem = _recordsTree.getSelectionModel().getSelectedItem();
         var trainData = _recordsLoader.getTrainData();
 
@@ -89,12 +99,72 @@ public class SampleOverviewController implements Initializable {
             _radId2TreeItem.put(radId, radiologist);
         }
 
+        setupFilteringTableViews();
+
         _recordsLoader.trainRecordsDirProperty().addListener((observable, oldValue, newValue) -> {
-            refillRadItemFolders();
+            refillRadItemFolders(_recordsLoader.getTrainData());
+            fillFilteringTableViews();
             fillPieChart();
         });
     }
 
+    private void setupFilteringTableViews() {
+        // TODO: Make checkboxes editable when needed.
+
+        // Setup _tvAllowedRadiologists.
+        _tvAllowedRadiologists.setEditable(true);
+        _tvAllowedRadiologists.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        //_tcRadiologistShow.setEditable(true);
+        _tcRadiologistShow.setCellFactory(cellData -> new CheckBoxTableCell<>());
+        _tcRadiologistShow.setCellValueFactory(cellData -> cellData.getValue().isCheckedProperty());
+        _tcRadiologistName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+
+        // Setup _tvAllowedFindingClasses.
+        _tvAllowedFindingClasses.setEditable(true);
+        _tvAllowedFindingClasses.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        //_tcFindingShow.setEditable(true);
+        _tcFindingShow.setCellFactory(cellData -> new CheckBoxTableCell<>());
+        _tcFindingShow.setCellValueFactory(cellData -> cellData.getValue().isCheckedProperty());
+        _tcFindingName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+    }
+
+    private void fillFilteringTableViews() {
+        var trainData = _recordsLoader.getTrainData();
+        if (trainData == null || !trainData.isValid()) {
+            return;
+        }
+
+        var records = trainData.getRecordsAll();
+        var radIdRows = records.stream().map(AbnormalityRecord::getRadId).distinct().sorted()
+                .map(radId -> new NamedFlag(radId, true)).toList();
+        var findingClassesRows = records.stream().map(AbnormalityRecord::getAbnormalityClass).distinct().sorted()
+                .map(fc -> new NamedFlag(fc.getClassName(), true)).toList();
+
+        // Add filtering listeners to the filtering table view items.
+        ChangeListener<Boolean> listener = (observable, oldValue, newValue) -> {
+            var filteredTrainData = getFilteredTrainData();
+            refillRadItemFolders(filteredTrainData);
+            fillPieChart();
+        };
+
+        for (var radIdRow : radIdRows) {
+            radIdRow.isCheckedProperty().addListener(listener);
+        }
+
+        for (var findingClassesRow : findingClassesRows) {
+            findingClassesRow.isCheckedProperty().addListener(listener);
+        }
+
+        _tvAllowedRadiologists.getItems().clear();
+        _tvAllowedRadiologists.getItems().addAll(radIdRows);
+
+        _tvAllowedFindingClasses.getItems().clear();
+        _tvAllowedFindingClasses.getItems().addAll(findingClassesRows);
+    }
+
+    /**
+     * Fill the pie chart with the finding classes statistics.
+     */
     private void fillPieChart() {
         var trainData = _recordsLoader.getTrainData();
 
@@ -127,5 +197,34 @@ public class SampleOverviewController implements Initializable {
         }
 
         _pieChart.setData(FXCollections.observableArrayList(pieChartData));
+    }
+
+    /**
+     * Get the filtered train data. The filtering is based on the selected radiologists and finding classes.
+     * The selection is done in the table views _tvAllowedRadiologists and _tvAllowedFindingClasses.
+     * @return the filtered train data.
+     */
+    private TrainData getFilteredTrainData() {
+        var trainData = _recordsLoader.getTrainData();
+        if (trainData == null || !trainData.isValid()) {
+            return null;
+        }
+
+        var records = trainData.getRecordsAll();
+        var radId2Show = _tvAllowedRadiologists.getItems().stream()
+                .filter(NamedFlag::isChecked)
+                .map(NamedFlag::getName)
+                .collect(Collectors.toSet());
+        var findingClass2Show = _tvAllowedFindingClasses.getItems().stream()
+                .filter(NamedFlag::isChecked)
+                .map(NamedFlag::getName)
+                .collect(Collectors.toSet());
+
+        var filteredRecords = records.stream()
+                .filter(record -> radId2Show.contains(record.getRadId()))
+                .filter(record -> findingClass2Show.contains(record.getAbnormalityClass().getClassName()))
+                .toList();
+
+        return new TrainData(trainData.getTrainDirectory(), filteredRecords);
     }
 }

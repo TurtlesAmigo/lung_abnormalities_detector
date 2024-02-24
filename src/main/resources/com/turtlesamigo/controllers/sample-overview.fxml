@@ -11,6 +11,8 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
 <AnchorPane minHeight="1124" minWidth="2800" prefHeight="1124" prefWidth="2800" xmlns="http://javafx.com/javafx/11.0.1"
             xmlns:fx="http://javafx.com/fxml/1" stylesheets="@styles/sample-overview-style.css"
             fx:controller="com.turtlesamigo.controllers.SampleOverviewController">
@@ -20,9 +22,31 @@
     <HBox spacing="20"
           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
           AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
-        <RecordsLoader fx:id="_recordsLoader" HBox.hgrow="NEVER" VBox.vgrow="ALWAYS" prefWidth="800"
-                       AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
-                       AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
+        <VBox>
+            <RecordsLoader fx:id="_recordsLoader" HBox.hgrow="NEVER" VBox.vgrow="ALWAYS" prefWidth="800"
+                           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+                           AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
+            <AnchorPane HBox.hgrow="ALWAYS">
+                <TableView fx:id="_tvAllowedRadiologists" VBox.vgrow="ALWAYS"
+                           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+                           AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+                    <columns>
+                        <TableColumn fx:id="_tcRadiologistName" editable="false" prefWidth="144.0" text="Radiologist"/>
+                        <TableColumn fx:id="_tcRadiologistShow" prefWidth="144.0" text="Show"/>
+                    </columns>
+                </TableView>
+            </AnchorPane>
+            <AnchorPane HBox.hgrow="ALWAYS">
+                <TableView fx:id="_tvAllowedFindingClasses" VBox.vgrow="ALWAYS"
+                           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+                           AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+                    <columns>
+                        <TableColumn fx:id="_tcFindingName" editable="false" prefWidth="135.0" text="Finding Class"/>
+                        <TableColumn fx:id="_tcFindingShow" prefWidth="136.0" text="Show"/>
+                    </columns>
+                </TableView>
+            </AnchorPane>
+        </VBox>
         <TabPane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" prefWidth="2200"
                  AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
                  AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
