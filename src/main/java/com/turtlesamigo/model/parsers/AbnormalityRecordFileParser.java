@@ -1,29 +1,25 @@
 package com.turtlesamigo.model.parsers;
 
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import com.turtlesamigo.model.AbnormalityClass;
 import com.turtlesamigo.model.AbnormalityRecord;
 import org.opencv.core.Point;
 import org.opencv.core.Rect2d;
 
+import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class AbnormalityRecordFileParser {
-    private final String _filePath;
     private final List<AbnormalityRecord> _records;
 
-    public AbnormalityRecordFileParser(String csvPath) throws Exception {
-        _filePath = csvPath;
-        FileReader fileReader = new FileReader(csvPath);
+    public AbnormalityRecordFileParser(File file) throws java.io.IOException, CsvException {
+        FileReader fileReader = new FileReader(file);
         CSVReader csvReader = new CSVReader(fileReader);
         var rows = csvReader.readAll();
         _records = rows.stream().skip(1).map(this::parseCsvRow).collect(Collectors.toList());
-    }
-
-    public String getFilePath() {
-        return _filePath;
     }
 
     public List<AbnormalityRecord> getRecords() {

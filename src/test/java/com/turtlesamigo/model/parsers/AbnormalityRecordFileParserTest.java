@@ -7,13 +7,16 @@ import org.junit.jupiter.api.Test;
 import org.opencv.core.Point;
 import org.opencv.core.Rect2d;
 
+import java.io.File;
+
 class AbnormalityRecordFileParserTest {
 
     @Test
     @DisplayName("Abnormality Record Parsing Test")
     void abnormalityRecordParsingTest() throws Exception {
         String testResourcePath = "src/test/resources/record_parser_test.csv";
-        AbnormalityRecordFileParser parser = new AbnormalityRecordFileParser(testResourcePath);
+        File file = new File(testResourcePath);
+        AbnormalityRecordFileParser parser = new AbnormalityRecordFileParser(file);
         var records = parser.getRecords();
 
         Assertions.assertEquals(1, records.size());

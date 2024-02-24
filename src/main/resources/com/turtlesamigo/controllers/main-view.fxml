@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane minHeight="1024" minWidth="2048" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.turtlesamigo.controllers.MainController">
+
+  <VBox prefHeight="1024.0" prefWidth="2048.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <MenuBar>
+      <Menu text="File">
+        <MenuItem onAction="#onOpenImage" text="Open" />
+        <SeparatorMenuItem />
+        <MenuItem onAction="#exitApplication" text="Exit" />
+      </Menu>
+      <Menu text="Train">
+        <MenuItem onAction="#onSampleOverview" text="Sample overview" />
+      </Menu>
+    </MenuBar>
+
+    <ImageView fx:id="imageView" />
+    <Label fx:id="fileNameLabel" text="File Name: " />
+    <Label fx:id="fileSizeLabel" text="File Size: " />
+  </VBox>
+</AnchorPane>

@@ -1,28 +1,32 @@
 package com.turtlesamigo.model;
 
+import javafx.scene.paint.Color;
+
 public enum AbnormalityClass {
-    AORTIC_ENLARGEMENT  (0, "Aortic enlargement"),
-    ATELECTASIS         (1, "Atelectasis"),
-    CALCIFICATION       (2, "Calcification"),
-    CARDIOMEGALY        (3, "Cardiomegaly"),
-    CONSOLIDATION       (4, "Consolidation"),
-    ILD                 (5, "ILD"),
-    INFILTRATION        (6, "Infiltration"),
-    LUNG_OPACITY        (7, "Lung opacity"),
-    NODULE_MASS         (8, "Nodule/Mass"),
-    OTHER_LESION        (9, "Other lesion"),
-    PLEURAL_EFFUSION    (10, "Pleural effusion"),
-    PLEURAL_THICKENING  (11, "Pleural thickening"),
-    PNEUMOTHORAX        (12, "Pneumothorax"),
-    PULMONARY_FIBROSIS  (13, "Pulmonary fibrosis"),
-    NO_FINDING          (14, "No finding");
+    AORTIC_ENLARGEMENT  (0, "Aortic enlargement", Color.RED),
+    ATELECTASIS         (1, "Atelectasis", Color.BLUE),
+    CALCIFICATION       (2, "Calcification", Color.GREEN),
+    CARDIOMEGALY        (3, "Cardiomegaly", Color.YELLOW),
+    CONSOLIDATION       (4, "Consolidation", Color.ORANGE),
+    ILD                 (5, "ILD", Color.PURPLE),
+    INFILTRATION        (6, "Infiltration", Color.PINK),
+    LUNG_OPACITY        (7, "Lung opacity", Color.CYAN),
+    NODULE_MASS         (8, "Nodule/Mass", Color.BROWN),
+    OTHER_LESION        (9, "Other lesion", Color.GRAY),
+    PLEURAL_EFFUSION    (10, "Pleural effusion", Color.LIGHTGRAY),
+    PLEURAL_THICKENING  (11, "Pleural thickening", Color.LIGHTPINK),
+    PNEUMOTHORAX        (12, "Pneumothorax", Color.LIGHTBLUE),
+    PULMONARY_FIBROSIS  (13, "Pulmonary fibrosis", Color.LIGHTGREEN),
+    NO_FINDING          (14, "No finding", Color.WHITE);
 
     private final int _classId;
     private final String _className;
+    private final Color _color;
 
-    AbnormalityClass(int classId, String className) {
+    AbnormalityClass(int classId, String className, Color color) {
         _classId = classId;
         _className = className;
+        _color = color;
     }
 
     public int getClassId() {
@@ -35,6 +39,10 @@ public enum AbnormalityClass {
 
     public boolean isFinding() {
         return this != NO_FINDING;
+    }
+
+    public Color getColor() {
+        return _color;
     }
 
     public static AbnormalityClass getClassById(int id) {

@@ -1,56 +1,30 @@
-package com.turtlesamigo.lungabnormdetector;
+package com.turtlesamigo.controllers;
 
-import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.opencv.core.Core;
 
 import java.io.File;
-import java.io.IOException;
 
-public class HelloApplication extends Application {
-    static {System.loadLibrary(Core.NATIVE_LIBRARY_NAME);}
+public class MainController {
+    @FXML
+    public ImageView imageView;
+    @FXML
+    private Label fileNameLabel;
+    @FXML
+    private Label fileSizeLabel;
 
-    private ImageView imageView = new ImageView();
-    private Label fileNameLabel = new Label("File: ");
-    private Label fileSizeLabel = new Label("Size: ");
-
-    @Override
-    public void start(Stage primaryStage) throws IOException {
-        primaryStage.setTitle("Image Open App");
-
-        MenuBar menuBar = new MenuBar();
-        Menu fileMenu = new Menu("File");
-        MenuItem openItem = new MenuItem("Open");
-        openItem.setOnAction(this::openImage);
-        MenuItem exitItem = new MenuItem("Exit");
-        exitItem.setOnAction(e -> System.exit(0));
-        fileMenu.getItems().addAll(openItem, new SeparatorMenuItem(), exitItem);
-
-        menuBar.getMenus().addAll(fileMenu);
-
-        VBox vbox = new VBox(menuBar);
-
-        Group root = new Group(vbox);
-        vbox.getChildren().addAll(imageView, fileNameLabel, fileSizeLabel);
-
-        primaryStage.setScene(new Scene(root, 800, 600));
-        primaryStage.show();
-    }
-
-    private void openImage(ActionEvent event) {
+    @FXML
+    public void onOpenImage() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Image File");
         fileChooser.getExtensionFilters().addAll(
@@ -68,8 +42,22 @@ public class HelloApplication extends Application {
                 fileSizeLabel.setText("Size: " + selectedFile.length() / 1024 + " KB");
             } catch (Exception e) {
                 showAlert("Error", "Could not open the image.");
+                e.printStackTrace();
             }
         }
+    }
+
+    @FXML
+    public void onSampleOverview(ActionEvent actionEvent) throws Exception {
+        Stage stage = new Stage();
+        stage.setTitle("Sample overview tool");
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("sample-overview.fxml"));
+        Parent root = loader.load();
+
+        stage.setScene(new Scene(root));
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.show();
     }
 
     private void detectAbnormalities(ActionEvent event) {
@@ -85,7 +73,8 @@ public class HelloApplication extends Application {
         alert.showAndWait();
     }
 
-    public static void main(String[] args) {
-        launch();
+    @FXML
+    public void exitApplication(ActionEvent event) {
+        System.exit(0);
     }
 }
