@@ -54,7 +54,7 @@
                 <HBox alignment="BOTTOM_CENTER" spacing="20" prefWidth="2000"
                       AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
                       AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
-                    <TreeView fx:id="_recordsTree" onMouseClicked="#selectItem" HBox.hgrow="SOMETIMES"
+                    <TreeView fx:id="_recordsTree" HBox.hgrow="SOMETIMES"
                               VBox.vgrow="ALWAYS" prefWidth="400">
                         <HBox.margin>
                             <Insets bottom="20.0" left="20.0" right="10.0" />

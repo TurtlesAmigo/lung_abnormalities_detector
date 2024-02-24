@@ -43,30 +43,6 @@ public class SampleOverviewController implements Initializable {
     @FXML private TableColumn<NamedFlag, Boolean> _tcFindingShow;
     @FXML private TableColumn<NamedFlag, String> _tcFindingName;
 
-    /**
-     * Show the selected image and its records in the table view.
-     */
-    @FXML
-    public void selectItem() {
-        var selectedItem = _recordsTree.getSelectionModel().getSelectedItem();
-        var trainData = _recordsLoader.getTrainData();
-
-        if (selectedItem == null || trainData == null || !trainData.isValid()) {
-            return;
-        }
-
-        var imageId = selectedItem.getValue();
-        var imageId2File = trainData.getImageId2File();
-
-        if (!imageId2File.containsKey(imageId)) {
-            return;
-        }
-
-        var imageFile = imageId2File.get(imageId);
-        var records = trainData.getImageId2Records().get(imageId);
-        _imageFindingsViewer.fillComponent(imageFile, records);
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Initialize the records tree.
@@ -90,6 +66,34 @@ public class SampleOverviewController implements Initializable {
             fillFilteringTableViews();
             fillPieChart();
         });
+
+        _recordsTree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            onRecordSelectionChange();
+        });
+    }
+
+    /**
+     * Show the selected image and its records in the table view.
+     */
+    @FXML
+    public void onRecordSelectionChange() {
+        var selectedItem = _recordsTree.getSelectionModel().getSelectedItem();
+        var trainData = _recordsLoader.getTrainData();
+
+        if (selectedItem == null || trainData == null || !trainData.isValid()) {
+            return;
+        }
+
+        var imageId = selectedItem.getValue();
+        var imageId2File = trainData.getImageId2File();
+
+        if (!imageId2File.containsKey(imageId)) {
+            return;
+        }
+
+        var imageFile = imageId2File.get(imageId);
+        var records = trainData.getImageId2Records().get(imageId);
+        _imageFindingsViewer.fillComponent(imageFile, records);
     }
 
     /**
