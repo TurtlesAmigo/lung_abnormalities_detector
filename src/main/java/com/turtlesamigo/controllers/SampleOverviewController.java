@@ -1,10 +1,13 @@
 package com.turtlesamigo.controllers;
 
+import com.turtlesamigo.collections.MapOfLists;
 import com.turtlesamigo.controllers.components.ImageFindingsViewer;
 import com.turtlesamigo.controllers.components.RecordsLoader;
 import com.turtlesamigo.controllers.helpers.NamedFlag;
+import com.turtlesamigo.model.AbnormalityClass;
 import com.turtlesamigo.model.AbnormalityRecord;
 import com.turtlesamigo.model.TrainData;
+import com.turtlesamigo.utils.UIUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -12,7 +15,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -41,7 +43,11 @@ public class SampleOverviewController implements Initializable {
     @FXML private TableColumn<NamedFlag, Boolean> _tcFindingShow;
     @FXML private TableColumn<NamedFlag, String> _tcFindingName;
 
-    private void refillRadItemFolders(TrainData trainData) {
+    /**
+     * Refill the records components based on the train data.
+     * @param trainData the train data.
+     */
+    private void refillRecordsComponents(TrainData trainData) {
         List<TreeItem<String>> radItemFolders = _recordsTree.getRoot().getChildren();
         for (TreeItem<String> radiologistItem : radItemFolders) {
             radiologistItem.getChildren().clear();
@@ -57,6 +63,11 @@ public class SampleOverviewController implements Initializable {
             assert _radId2TreeItem.containsKey(radId);
             _radId2TreeItem.get(radId).getChildren().add(new TreeItem<>(imageId));
         }
+
+        _recordsTree.getRoot().setExpanded(true);
+
+        UIUtils.showAlert("Records loaded", "Records have been loaded successfully.",
+                "", Alert.AlertType.INFORMATION);
     }
 
     /**
@@ -102,7 +113,7 @@ public class SampleOverviewController implements Initializable {
         setupFilteringTableViews();
 
         _recordsLoader.trainRecordsDirProperty().addListener((observable, oldValue, newValue) -> {
-            refillRadItemFolders(_recordsLoader.getTrainData());
+            refillRecordsComponents(_recordsLoader.getTrainData());
             fillFilteringTableViews();
             fillPieChart();
         });
@@ -112,17 +123,17 @@ public class SampleOverviewController implements Initializable {
         // TODO: Make checkboxes editable when needed.
 
         // Setup _tvAllowedRadiologists.
-        _tvAllowedRadiologists.setEditable(true);
+        _tvAllowedRadiologists.setEditable(false);
         _tvAllowedRadiologists.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
-        //_tcRadiologistShow.setEditable(true);
+        _tcRadiologistShow.setEditable(false);
         _tcRadiologistShow.setCellFactory(cellData -> new CheckBoxTableCell<>());
         _tcRadiologistShow.setCellValueFactory(cellData -> cellData.getValue().isCheckedProperty());
         _tcRadiologistName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
 
         // Setup _tvAllowedFindingClasses.
-        _tvAllowedFindingClasses.setEditable(true);
+        _tvAllowedFindingClasses.setEditable(false);
         _tvAllowedFindingClasses.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
-        //_tcFindingShow.setEditable(true);
+        _tcFindingShow.setEditable(false);
         _tcFindingShow.setCellFactory(cellData -> new CheckBoxTableCell<>());
         _tcFindingShow.setCellValueFactory(cellData -> cellData.getValue().isCheckedProperty());
         _tcFindingName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
@@ -143,7 +154,7 @@ public class SampleOverviewController implements Initializable {
         // Add filtering listeners to the filtering table view items.
         ChangeListener<Boolean> listener = (observable, oldValue, newValue) -> {
             var filteredTrainData = getFilteredTrainData();
-            refillRadItemFolders(filteredTrainData);
+            refillRecordsComponents(filteredTrainData);
             fillPieChart();
         };
 
@@ -172,6 +183,8 @@ public class SampleOverviewController implements Initializable {
             return;
         }
 
+        MapOfLists<String, AbnormalityRecord> imageId2Records = new MapOfLists<>();
+
         var records = trainData.getRecordsAll();
         var findingClasses = records.stream()
                 .map(AbnormalityRecord::getAbnormalityClass)
@@ -186,8 +199,21 @@ public class SampleOverviewController implements Initializable {
         }
 
         for (var record : records) {
-            var findingClass = record.getAbnormalityClass().getClassName();
-            findingClass2Count.put(findingClass, findingClass2Count.get(findingClass) + 1);
+            // var findingClass = record.getAbnormalityClass().getClassName();
+            // findingClass2Count.put(findingClass, findingClass2Count.get(findingClass) + 1);
+
+            imageId2Records.add(record.getImageId(), record);
+        }
+
+        for (var entry : imageId2Records.entrySet()) {
+            var findingClassesInImage = entry.getValue().stream()
+                    .map(AbnormalityRecord::getAbnormalityClass)
+                    .map(AbnormalityClass::getClassName)
+                    .collect(Collectors.toSet());
+
+            for (var findingClass : findingClassesInImage) {
+                findingClass2Count.put(findingClass, findingClass2Count.get(findingClass) + 1);
+            }
         }
 
         var pieChartData = new ArrayList<PieChart.Data>();
