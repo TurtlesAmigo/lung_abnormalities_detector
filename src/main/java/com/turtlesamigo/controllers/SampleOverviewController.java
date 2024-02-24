@@ -44,33 +44,6 @@ public class SampleOverviewController implements Initializable {
     @FXML private TableColumn<NamedFlag, String> _tcFindingName;
 
     /**
-     * Refill the records components based on the train data.
-     * @param trainData the train data.
-     */
-    private void refillRecordsComponents(TrainData trainData) {
-        List<TreeItem<String>> radItemFolders = _recordsTree.getRoot().getChildren();
-        for (TreeItem<String> radiologistItem : radItemFolders) {
-            radiologistItem.getChildren().clear();
-        }
-
-        if (trainData == null || !trainData.isValid()) {
-            return;
-        }
-
-        for (var record : trainData.getRecordsAll()) {
-            var radId = record.getRadId();
-            var imageId = record.getImageId();
-            assert _radId2TreeItem.containsKey(radId);
-            _radId2TreeItem.get(radId).getChildren().add(new TreeItem<>(imageId));
-        }
-
-        _recordsTree.getRoot().setExpanded(true);
-
-        UIUtils.showAlert("Records loaded", "Records have been loaded successfully.",
-                "", Alert.AlertType.INFORMATION);
-    }
-
-    /**
      * Show the selected image and its records in the table view.
      */
     @FXML
@@ -117,6 +90,33 @@ public class SampleOverviewController implements Initializable {
             fillFilteringTableViews();
             fillPieChart();
         });
+    }
+
+    /**
+     * Refill the records components based on the train data.
+     * @param trainData the train data.
+     */
+    private void refillRecordsComponents(TrainData trainData) {
+        List<TreeItem<String>> radItemFolders = _recordsTree.getRoot().getChildren();
+        for (TreeItem<String> radiologistItem : radItemFolders) {
+            radiologistItem.getChildren().clear();
+        }
+
+        if (trainData == null || !trainData.isValid()) {
+            return;
+        }
+
+        for (var record : trainData.getRecordsAll()) {
+            var radId = record.getRadId();
+            var imageId = record.getImageId();
+            assert _radId2TreeItem.containsKey(radId);
+            _radId2TreeItem.get(radId).getChildren().add(new TreeItem<>(imageId));
+        }
+
+        _recordsTree.getRoot().setExpanded(true);
+
+        UIUtils.showAlert("Records loaded", "Records have been loaded successfully.",
+                "", Alert.AlertType.INFORMATION);
     }
 
     private void setupFilteringTableViews() {
