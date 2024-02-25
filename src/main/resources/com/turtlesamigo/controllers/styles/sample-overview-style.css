@@ -20,6 +20,7 @@
 .button {
     -fx-background-color: #1890ff;
     -fx-text-fill: #ffffff;
+    -fx-cursor: hand; /* Hand cursor on hover */
 }
 
 /* TableView settings */

@@ -49,20 +49,21 @@ public class ImageFindingsViewer extends VBox {
         initTreeTableView();
     }
 
-    public void fillComponent(File imageFile, List<AbnormalityRecord> records) {
+    public void fillComponentWithImageRecords(File imageFile, List<AbnormalityRecord> records) {
         _records = records;
+        _lblNoImage.setVisible(imageFile == null);
 
         if (imageFile == null) {
-            _lblNoImage.setVisible(true);
+            _tfFilePath.clear();
+            _imageView.setImage(null);
+            displayFindings();
             return;
         }
 
-        _lblNoImage.setVisible(false);
         _tfFilePath.setText(imageFile.getAbsolutePath());
         var image = new javafx.scene.image.Image(imageFile.toURI().toString());
         _imageView.setImage(image);
 
-        // TODO: Check fill map / updateComponent order
         _record2Rect.clear();
         _record2Label.clear();
         var findings = records.stream().filter(AbnormalityRecord::isFinding).toList();
@@ -73,7 +74,7 @@ public class ImageFindingsViewer extends VBox {
             _record2Label.put(record, label);
         }
 
-        updateComponent();
+        displayFindings();
     }
 
     /**
@@ -85,9 +86,7 @@ public class ImageFindingsViewer extends VBox {
         _ttvRecordFilter.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         _ttcIsShown.setCellValueFactory(cellData -> cellData.getValue().getValue().isShownProperty());
         _ttcIsShown.setCellFactory(tc -> new CheckBoxTreeTableCell<>());
-
-        // TODO: Check, if works.
-        // Resize rects whenever the image is resized.
+        
         _imageView.fitWidthProperty().bind(_stackPane.widthProperty());
         _imageView.fitHeightProperty().bind(_stackPane.heightProperty());
 
@@ -95,22 +94,26 @@ public class ImageFindingsViewer extends VBox {
         _imageView.fitHeightProperty().addListener((observable, oldValue, newValue) -> redrawAllRects());
     }
 
-    private void updateComponent() {
-        refillTreeTableView();
+    private void displayFindings() {
+        refillRecordFilter();
         redrawAllRects();
     }
 
     /**
-     * Fills the tree table view with the records. The records are grouped by
+     * Fills the tree table view with the records related to the image. The records are grouped by
      * radiologist id and finding class. The visibility flag is used to show or hide the
      * record bounding box on the image. If the radiologist node is hidden, all
      * records of the radiologist are hidden as well. If the radiologist node is
      * shown, all records of the radiologist are shown as well.
      */
-    private void refillTreeTableView() {
+    private void refillRecordFilter() {
         var root = new javafx.scene.control.TreeItem<>(new TreeTableRecordItem("Radiologists", true));
         _ttvRecordFilter.setRoot(root);
         _ttvRecordFilter.setShowRoot(false);
+
+        if (_records == null) {
+            return;
+        }
 
         var radIds = _records.stream().map(AbnormalityRecord::getRadId).distinct().sorted().toList();
 
@@ -184,21 +187,28 @@ public class ImageFindingsViewer extends VBox {
     private void redrawAllRects() {
         _stackPane.getChildren().removeIf(r -> r instanceof Rectangle);
         _stackPane.getChildren().removeIf(r -> r instanceof Label);
+        _stackPane.getChildren().add(_lblNoImage);
         var root = _ttvRecordFilter.getRoot();
 
         if (root == null) {
             return;
         }
 
-        redrawAllChildren(root);
+        checkTreeItemChildrenFlags(root);
     }
 
-    private void redrawAllChildren(TreeItem<TreeTableRecordItem> root) {
+    /**
+     * Checks the children of the tree item and updates the visibility of the
+     * bounding boxes on the image. When the parent flag is changed, the children
+     * flags should be updated accordingly.
+     * @param root The root tree item.
+     */
+    private void checkTreeItemChildrenFlags(TreeItem<TreeTableRecordItem> root) {
         var recordChildren = root.getChildren().stream().filter(r -> r.getValue().getRecord() != null).toList();
 
         if (recordChildren.isEmpty()) {
             for (var node : root.getChildren()) {
-                redrawAllChildren(node);
+                checkTreeItemChildrenFlags(node);
             }
             return;
         }
@@ -209,6 +219,12 @@ public class ImageFindingsViewer extends VBox {
         }
     }
 
+    /**
+     * Returns the bounding box rectangle of the record adjusted
+     * to the new image size.
+     * @param record The record to adjust the bounding box for.
+     * @return The adjusted bounding box rectangle.
+     */
     @NotNull
     private Rectangle getAdjustedBoundingBoxRect(AbnormalityRecord record) {
         var rect = record.getBoundingBox();
