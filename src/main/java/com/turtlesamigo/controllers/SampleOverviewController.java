@@ -8,7 +8,6 @@ import com.turtlesamigo.model.AbnormalityClass;
 import com.turtlesamigo.model.AbnormalityRecord;
 import com.turtlesamigo.model.TrainData;
 import com.turtlesamigo.utils.UIUtils;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -25,6 +24,9 @@ import java.util.stream.Collectors;
 public class SampleOverviewController implements Initializable {
     private final HashMap<String, TreeItem<String>> _radId2TreeItem = new HashMap<>();
     public TreeView<String> _recordsTree;
+    @FXML private TitledPane _tpRecordsFiltering;
+    @FXML private TabPane _tpRecordsViewer;
+    @FXML private Button _btnApplyFilters;
     @FXML private Pane _imagePane;
     @FXML private BorderPane _borderPane;
     @FXML
@@ -42,6 +44,8 @@ public class SampleOverviewController implements Initializable {
     @FXML private TableView<NamedFlag> _tvAllowedFindingClasses;
     @FXML private TableColumn<NamedFlag, Boolean> _tcFindingShow;
     @FXML private TableColumn<NamedFlag, String> _tcFindingName;
+
+    private TrainData _filteredTrainData;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -61,11 +65,9 @@ public class SampleOverviewController implements Initializable {
 
         setupFilteringTableViews();
 
-        _recordsLoader.trainRecordsDirProperty().addListener((observable, oldValue, newValue) -> {
-            refillRecordsComponents(_recordsLoader.getTrainData());
-            fillFilteringTableViews();
-            fillPieChart();
-        });
+        _recordsLoader.trainRecordsDirProperty().addListener(
+                (observable, oldValue, newValue) -> onLoadedRecordsDirChange()
+        );
 
         _recordsTree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             onRecordSelectionChange();
@@ -78,22 +80,22 @@ public class SampleOverviewController implements Initializable {
     @FXML
     public void onRecordSelectionChange() {
         var selectedItem = _recordsTree.getSelectionModel().getSelectedItem();
-        var trainData = _recordsLoader.getTrainData();
 
-        if (selectedItem == null || trainData == null || !trainData.isValid()) {
+        if (selectedItem == null || _filteredTrainData == null || !_filteredTrainData.isValid()) {
             return;
         }
 
         var imageId = selectedItem.getValue();
-        var imageId2File = trainData.getImageId2File();
+        var imageId2File = _filteredTrainData.getImageId2File();
 
         if (!imageId2File.containsKey(imageId)) {
+            _imageFindingsViewer.fillComponentWithImageRecords(null, null);
             return;
         }
 
         var imageFile = imageId2File.get(imageId);
-        var records = trainData.getImageId2Records().get(imageId);
-        _imageFindingsViewer.fillComponent(imageFile, records);
+        var records = _filteredTrainData.getImageId2Records().get(imageId);
+        _imageFindingsViewer.fillComponentWithImageRecords(imageFile, records);
     }
 
     /**
@@ -118,32 +120,27 @@ public class SampleOverviewController implements Initializable {
         }
 
         _recordsTree.getRoot().setExpanded(true);
-
-        UIUtils.showAlert("Records loaded", "Records have been loaded successfully.",
-                "", Alert.AlertType.INFORMATION);
     }
 
     private void setupFilteringTableViews() {
-        // TODO: Make checkboxes editable when needed.
-
         // Setup _tvAllowedRadiologists.
-        _tvAllowedRadiologists.setEditable(false);
+        _tvAllowedRadiologists.setEditable(true);
         _tvAllowedRadiologists.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
-        _tcRadiologistShow.setEditable(false);
+        _tcRadiologistShow.setEditable(true);
         _tcRadiologistShow.setCellFactory(cellData -> new CheckBoxTableCell<>());
         _tcRadiologistShow.setCellValueFactory(cellData -> cellData.getValue().isCheckedProperty());
         _tcRadiologistName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
 
         // Setup _tvAllowedFindingClasses.
-        _tvAllowedFindingClasses.setEditable(false);
+        _tvAllowedFindingClasses.setEditable(true);
         _tvAllowedFindingClasses.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
-        _tcFindingShow.setEditable(false);
+        _tcFindingShow.setEditable(true);
         _tcFindingShow.setCellFactory(cellData -> new CheckBoxTableCell<>());
         _tcFindingShow.setCellValueFactory(cellData -> cellData.getValue().isCheckedProperty());
         _tcFindingName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
     }
 
-    private void fillFilteringTableViews() {
+    private void refillFilteringTableViews() {
         var trainData = _recordsLoader.getTrainData();
         if (trainData == null || !trainData.isValid()) {
             return;
@@ -155,21 +152,6 @@ public class SampleOverviewController implements Initializable {
         var findingClassesRows = records.stream().map(AbnormalityRecord::getAbnormalityClass).distinct().sorted()
                 .map(fc -> new NamedFlag(fc.getClassName(), true)).toList();
 
-        // Add filtering listeners to the filtering table view items.
-        ChangeListener<Boolean> listener = (observable, oldValue, newValue) -> {
-            var filteredTrainData = getFilteredTrainData();
-            refillRecordsComponents(filteredTrainData);
-            fillPieChart();
-        };
-
-        for (var radIdRow : radIdRows) {
-            radIdRow.isCheckedProperty().addListener(listener);
-        }
-
-        for (var findingClassesRow : findingClassesRows) {
-            findingClassesRow.isCheckedProperty().addListener(listener);
-        }
-
         _tvAllowedRadiologists.getItems().clear();
         _tvAllowedRadiologists.getItems().addAll(radIdRows);
 
@@ -180,9 +162,7 @@ public class SampleOverviewController implements Initializable {
     /**
      * Fill the pie chart with the finding classes statistics.
      */
-    private void fillPieChart() {
-        var trainData = _recordsLoader.getTrainData();
-
+    private void refillPieChart(TrainData trainData) {
         if (trainData == null || !trainData.isValid()) {
             return;
         }
@@ -251,10 +231,33 @@ public class SampleOverviewController implements Initializable {
                 .collect(Collectors.toSet());
 
         var filteredRecords = records.stream()
-                .filter(record -> radId2Show.contains(record.getRadId()))
-                .filter(record -> findingClass2Show.contains(record.getAbnormalityClass().getClassName()))
+                .filter(record -> radId2Show.contains(record.getRadId())
+                        && findingClass2Show.contains(record.getAbnormalityClass().getClassName()))
                 .toList();
 
         return new TrainData(trainData.getTrainDirectory(), filteredRecords);
+    }
+
+    private void onLoadedRecordsDirChange() {
+        _filteredTrainData = _recordsLoader.getTrainData();
+        refillRecordsComponents(_filteredTrainData);
+        refillFilteringTableViews();
+        refillPieChart(_filteredTrainData);
+
+        _tpRecordsViewer.setDisable(false);
+        _tpRecordsFiltering.setDisable(false);
+
+        UIUtils.showAlert("Records loaded", "Records have been loaded successfully.",
+                "", Alert.AlertType.INFORMATION);
+    }
+
+    @FXML
+    private void onApplyFilters() {
+        _filteredTrainData = getFilteredTrainData();
+        refillRecordsComponents(_filteredTrainData);
+        refillPieChart(_filteredTrainData);
+
+        UIUtils.showAlert("Records filtered", "Records have been filtered successfully.",
+                "", Alert.AlertType.INFORMATION);
     }
 }

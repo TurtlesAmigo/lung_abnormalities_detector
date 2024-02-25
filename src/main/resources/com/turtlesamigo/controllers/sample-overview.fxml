@@ -13,6 +13,9 @@
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.Button?>
+
 <AnchorPane minHeight="1124" minWidth="2800" prefHeight="1124" prefWidth="2800" xmlns="http://javafx.com/javafx/11.0.1"
             xmlns:fx="http://javafx.com/fxml/1" stylesheets="@styles/sample-overview-style.css"
             fx:controller="com.turtlesamigo.controllers.SampleOverviewController">
@@ -26,28 +29,48 @@
             <RecordsLoader fx:id="_recordsLoader" HBox.hgrow="NEVER" VBox.vgrow="ALWAYS" prefWidth="800"
                            AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
                            AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
-            <AnchorPane HBox.hgrow="ALWAYS">
-                <TableView fx:id="_tvAllowedRadiologists" VBox.vgrow="ALWAYS"
-                           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
-                           AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
-                    <columns>
-                        <TableColumn fx:id="_tcRadiologistName" editable="false" prefWidth="144.0" text="Radiologist"/>
-                        <TableColumn fx:id="_tcRadiologistShow" prefWidth="144.0" text="Show"/>
-                    </columns>
-                </TableView>
-            </AnchorPane>
-            <AnchorPane HBox.hgrow="ALWAYS">
-                <TableView fx:id="_tvAllowedFindingClasses" VBox.vgrow="ALWAYS"
-                           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
-                           AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
-                    <columns>
-                        <TableColumn fx:id="_tcFindingName" editable="false" prefWidth="135.0" text="Finding Class"/>
-                        <TableColumn fx:id="_tcFindingShow" prefWidth="136.0" text="Show"/>
-                    </columns>
-                </TableView>
-            </AnchorPane>
+            <TitledPane text="Record filters" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"
+                        collapsible="false" disable="true" fx:id="_tpRecordsFiltering">
+                <VBox spacing="20">
+                    <VBox>
+                        <TitledPane text="Finding classes filter" expanded="false"
+                            HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"
+                        >
+                            <TableView fx:id="_tvAllowedFindingClasses" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS"
+                                       AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+                                       AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+                                <columns>
+                                    <TableColumn fx:id="_tcFindingName" editable="false" prefWidth="135.0">
+                                        <text>Finding Class</text>
+                                    </TableColumn>
+                                    <TableColumn fx:id="_tcFindingShow" prefWidth="136.0" text="Show"/>
+                                </columns>
+                            </TableView>
+                        </TitledPane>
+                        <TitledPane text="Radiologists filter" expanded="false"
+                                    VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS"
+                        >
+                            <TableView fx:id="_tvAllowedRadiologists" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS"
+                                       AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+                                       AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+                                <columns>
+                                    <TableColumn fx:id="_tcRadiologistName" editable="false" prefWidth="144.0"
+                                                 text="Radiologist"/>
+                                    <TableColumn fx:id="_tcRadiologistShow" prefWidth="144.0" text="Show"/>
+                                </columns>
+                            </TableView>
+                        </TitledPane>
+                    </VBox>
+                    <Button fx:id="_btnApplyFilters" mnemonicParsing="false" text="Apply filters"
+                            VBox.vgrow="NEVER" HBox.hgrow="ALWAYS"
+                            AnchorPane.bottomAnchor="20" AnchorPane.topAnchor="20"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+                            prefWidth="800" onMouseClicked="#onApplyFilters"
+                    />
+                </VBox>
+            </TitledPane>
         </VBox>
-        <TabPane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" prefWidth="2200"
+        <TabPane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" prefWidth="2200" disable="true" fx:id="_tpRecordsViewer"
                  AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
                  AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
             <Tab text="Records" closable="false">
