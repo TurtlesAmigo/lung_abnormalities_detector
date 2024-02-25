@@ -7,6 +7,7 @@
 .records-loader .button {
     -fx-background-color: #1890ff; /* Dark blue background */
     -fx-text-fill: #ffffff; /* White text for contrast */
+    -fx-cursor: hand; /* Hand cursor on hover */
 }
 
 /* TextField settings */
