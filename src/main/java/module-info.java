@@ -7,6 +7,8 @@ module com.turtlesamigo.lungabnormdetector {
     requires opencv;
     requires com.opencsv;
     requires org.jetbrains.annotations;
+    requires nd4j.api;
+    requires deeplearning4j.nn;
 
     opens com.turtlesamigo.controllers to javafx.fxml;
     exports com.turtlesamigo.controllers;
